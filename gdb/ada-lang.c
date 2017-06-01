@@ -6440,7 +6440,6 @@ ada_collect_symbol_completion_matches (completion_tracker &tracker,
 				       const char *text, const char *word,
 				       enum type_code code)
 {
-  int text_len;
   struct symbol *sym;
   struct compunit_symtab *s;
   struct minimal_symbol *msymbol;
@@ -6452,10 +6451,7 @@ ada_collect_symbol_completion_matches (completion_tracker &tracker,
 
   gdb_assert (code == TYPE_CODE_UNDEF);
 
-  text_len = strlen (text);
-
-  lookup_name_info lookup_name (std::string (text, text_len),
-				name_match_type, true);
+  lookup_name_info lookup_name (text, name_match_type, true);
 
   /* First, look at the partial symtab symbols.  */
   expand_symtabs_matching (NULL,
@@ -6476,8 +6472,7 @@ ada_collect_symbol_completion_matches (completion_tracker &tracker,
     completion_list_add_name (tracker,
 			      MSYMBOL_LANGUAGE (msymbol),
 			      MSYMBOL_LINKAGE_NAME (msymbol),
-			      lookup_name,
-			      text, text_len, text, word);
+			      lookup_name, text, word);
   }
 
   /* Search upwards from currently selected frame (so that we can
@@ -6493,8 +6488,7 @@ ada_collect_symbol_completion_matches (completion_tracker &tracker,
 	completion_list_add_name (tracker,
 				  SYMBOL_LANGUAGE (sym),
 				  SYMBOL_LINKAGE_NAME (sym),
-				  lookup_name,
-				  text, text_len, text, word);
+				  lookup_name, text, word);
       }
     }
 
@@ -6510,8 +6504,7 @@ ada_collect_symbol_completion_matches (completion_tracker &tracker,
       completion_list_add_name (tracker,
 				SYMBOL_LANGUAGE (sym),
 				SYMBOL_LINKAGE_NAME (sym),
-				lookup_name,
-				text, text_len, text, word);
+				lookup_name, text, word);
     }
   }
 
@@ -6527,8 +6520,7 @@ ada_collect_symbol_completion_matches (completion_tracker &tracker,
       completion_list_add_name (tracker,
 				SYMBOL_LANGUAGE (sym),
 				SYMBOL_LINKAGE_NAME (sym),
-				lookup_name,
-				text, text_len, text, word);
+				lookup_name, text, word);
     }
   }
 
