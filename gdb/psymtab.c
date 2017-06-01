@@ -645,9 +645,7 @@ match_partial_symbol (struct objfile *objfile,
    not contain any method/function instance information (since this would
    force reading type information while reading psymtabs).  Therefore,
    if NAME contains overload information, it must be stripped before searching
-   psymtabs.
-
-   The caller is responsible for freeing the return result.  */
+   psymtabs.  */
 
 static gdb::unique_xmalloc_ptr<char>
 psymtab_search_name (const char *name)
@@ -658,10 +656,10 @@ psymtab_search_name (const char *name)
       {
 	if (strchr (name, '('))
 	  {
-	    char *ret = cp_remove_params (name);
+	    gdb::unique_xmalloc_ptr<char> ret = cp_remove_params (name);
 
 	    if (ret)
-	      return gdb::unique_xmalloc_ptr<char> (ret);
+	      return ret;
 	  }
       }
       break;
@@ -691,7 +689,8 @@ lookup_partial_symbol (struct objfile *objfile,
 
   gdb::unique_xmalloc_ptr<char> search_name = psymtab_search_name (name);
 
-  lookup_name_info lookup_name (search_name.get (), symbol_name_match_type::FULL);
+  lookup_name_info lookup_name (search_name.get (),
+				symbol_name_match_type::FULL);
 
   start = (global ?
 	   objfile->global_psymbols.list + pst->globals_offset :
