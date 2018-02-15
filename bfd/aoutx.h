@@ -1303,6 +1303,8 @@ NAME (aout, set_section_contents) (bfd *abfd,
 static bfd_boolean
 aout_get_external_symbols (bfd *abfd)
 {
+  if (bfd_get_flavour(abfd) != bfd_target_aout_flavour)
+    return FALSE;
   if (obj_aout_external_syms (abfd) == NULL)
     {
       bfd_size_type count;

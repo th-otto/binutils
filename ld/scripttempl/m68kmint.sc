@@ -19,29 +19,38 @@ SECTIONS
   ${RELOCATING+/* The VMA of the .text section is ${TEXT_START_ADDR} instead of 0
      because the extended MiNT header is just before,
      at the beginning of the TEXT segment.  */}
-  .text ${RELOCATING+${TEXT_START_ADDR}}:
+  .text ${RELOCATING+${TEXT_START_ADDR}}: SUBALIGN(2)
   {
     CREATE_OBJECT_SYMBOLS
-    *(.text)
+    *(.text .text.*)
+    *(.rodata .rodata.*) /* Only present in ELF objects */
+    ${RELOCATING+ *(.ctors)}
+    ${RELOCATING+ *(.dtors)}
     ${CONSTRUCTING+CONSTRUCTORS}
+    ${RELOCATING+etext = .;}
     ${RELOCATING+_etext = .;}
-    ${RELOCATING+__etext = .;}
   }
 
-  .data :
+  .data : SUBALIGN(2)
   {
-    *(.data)
+    *(.data .data.*)
+    ${RELOCATING+edata = .;}
     ${RELOCATING+_edata = .;}
-    ${RELOCATING+__edata = .;}
   }
 
   .bss :
   {
-    ${RELOCATING+__bss_start = .;}
-    *(.bss)
+    ${RELOCATING+_bss_start = .;}
+    *(.bss .bss.*)
     *(COMMON)
+    ${RELOCATING+end = .;}
     ${RELOCATING+_end = .;}
-    ${RELOCATING+__end = .;}
   }
+
+  /* Unfortunately, stabs are not mappable from ELF to a.out.
+     It can probably be fixed with some amount of work.  */
+  /DISCARD/ :
+  { *(.stab) *(.stab*) *(.debug) *(.debug*) *(.comment) *(.gnu.warning.*) }
+
 }
 EOF
