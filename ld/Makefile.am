@@ -359,6 +359,7 @@ ALL_EMULATION_SOURCES = \
 	em68kelf.c \
 	em68kelfnbsd.c \
 	em68klinux.c \
+	em68kmintelf.c \
 	em68kmint.c \
 	em68knbsd.c \
 	em68kpsos.c \
@@ -1587,6 +1588,10 @@ em68kelfnbsd.c: $(srcdir)/emulparams/m68kelfnbsd.sh \
 
 em68klinux.c: $(srcdir)/emulparams/m68klinux.sh \
   $(srcdir)/emultempl/linux.em $(srcdir)/scripttempl/aout.sc ${GEN_DEPENDS}
+
+em68kmintelf.c: $(srcdir)/emulparams/m68kmintelf.sh \
+  $(srcdir)/emultempl/generic.em $(srcdir)/emultempl/mint.em \
+  $(srcdir)/scripttempl/m68kmintelf.sc ${GEN_DEPENDS}
 
 em68kmint.c: $(srcdir)/emulparams/m68kmint.sh \
   $(srcdir)/emultempl/generic.em $(srcdir)/emultempl/mint.em \
