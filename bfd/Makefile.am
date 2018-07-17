@@ -265,6 +265,7 @@ BFD32_BACKENDS = \
 	aout-cris.lo \
 	aout-ns32k.lo \
 	aout-tic30.lo \
+	aout0.lo \
 	aout32.lo \
 	cf-i386lynx.lo \
 	coff-go32.lo \
@@ -402,6 +403,7 @@ BFD32_BACKENDS_CFILES = \
 	aout-cris.c \
 	aout-ns32k.c \
 	aout-tic30.c \
+	aout0.c \
 	aout32.c \
 	cf-i386lynx.c \
 	coff-go32.c \
@@ -680,7 +682,7 @@ CFILES = $(SOURCE_CFILES) $(BUILD_CFILES)
 
 ## This is a list of all .h files which are in the source tree.
 SOURCE_HFILES = \
-	aout-target.h aoutx.h coffcode.h coffswap.h ecoffswap.h \
+	aout-target.h aoutf1.h aoutx.h coffcode.h coffswap.h ecoffswap.h \
 	elf-bfd.h elf-hppa.h elf-linux-core.h elf32-hppa.h \
 	elf64-hppa.h elfcode.h elfcore.h \
 	genlink.h go32stub.h \
