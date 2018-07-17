@@ -1208,7 +1208,51 @@ tc_m68k_fix_adjustable (fixS *fixP)
 
 #else /* !OBJ_ELF */
 
-#define get_reloc_code(SIZE,PCREL,OTHER) NO_RELOC
+/* Compute the relocation code for a fixup of SIZE bytes, using pc
+   relative relocation if PCREL is non-zero.  PIC says whether a special
+   pic relocation was requested.  */
+
+static bfd_reloc_code_real_type
+get_reloc_code (int size, int pcrel)
+{
+      if (pcrel)
+	{
+	  switch (size)
+	    {
+	    case 1:
+	      return BFD_RELOC_8_PCREL;
+	    case 2:
+	      return BFD_RELOC_16_PCREL;
+	    case 4:
+	      return BFD_RELOC_32_PCREL;
+	    }
+	}
+      else
+	{
+	  switch (size)
+	    {
+	    case 1:
+	      return BFD_RELOC_8;
+	    case 2:
+	      return BFD_RELOC_16;
+	    case 4:
+	      return BFD_RELOC_32;
+	    }
+	}
+
+  if (pcrel)
+    {
+	as_bad (_("Can not do %d byte pc-relative relocation"), size);
+    }
+  else
+    {
+	as_bad (_("Can not do %d byte relocation"), size);
+    }
+
+  return BFD_RELOC_NONE;
+}
+
+#define get_reloc_code(SIZE,PCREL,OTHER) (get_reloc_code)(SIZE, PCREL)
 
 /* PR gas/3041 Weak symbols are not relaxable
    because they must be treated as extern.  */
