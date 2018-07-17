@@ -1,6 +1,7 @@
 #name: br-isaa.d
 #objdump: -dr
 #as: -march=isaa -pcrel
+#not-target: m68k-*-mint*
 
 .*:     file format .*
 

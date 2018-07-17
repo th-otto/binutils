@@ -1,6 +1,7 @@
 #name: br-isab.d
 #objdump: -dr
 #as: -march=isab -pcrel
+#not-target: m68k-*-mint*
 
 .*:     file format .*
 

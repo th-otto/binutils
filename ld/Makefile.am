@@ -325,6 +325,8 @@ ALL_EMULATION_SOURCES = \
 	em68kelf.c \
 	em68kelfnbsd.c \
 	em68kaout.c \
+	em68kmintelf.c \
+	em68kmint.c \
 	em9s12zelf.c \
 	emcorepe.c \
 	emn10200.c \
@@ -1439,6 +1441,14 @@ em68kelfnbsd.c: $(srcdir)/emulparams/m68kelfnbsd.sh \
 
 em68kaout.c: $(srcdir)/emulparams/m68kaout.sh \
   $(srcdir)/emultempl/generic.em $(srcdir)/scripttempl/aout.sc ${GEN_DEPENDS}
+
+em68kmintelf.c: $(srcdir)/emulparams/m68kmintelf.sh \
+  $(srcdir)/emultempl/generic.em $(srcdir)/emultempl/mint.em \
+  $(srcdir)/scripttempl/m68kmintelf.sc ${GEN_DEPENDS}
+
+em68kmint.c: $(srcdir)/emulparams/m68kmint.sh \
+  $(srcdir)/emultempl/generic.em $(srcdir)/emultempl/mint.em \
+  $(srcdir)/scripttempl/m68kmint.sc ${GEN_DEPENDS}
 
 em9s12zelf.c: $(srcdir)/emulparams/m9s12zelf.sh \
   $(ELF_DEPS) $(srcdir)/emultempl/generic.em \

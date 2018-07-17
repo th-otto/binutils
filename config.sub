@@ -994,6 +994,10 @@ case $basic_machine in
 	miniframe)
 		basic_machine=m68000-convergent
 		;;
+	*mintelf*)
+		basic_machine=m68k-atari
+		os=mintelf
+		;;
 	*mint | mint[0-9]* | *MiNT | *MiNT[0-9]*)
 		basic_machine=m68k-atari
 		os=mint
@@ -1494,6 +1498,9 @@ case $os in
 	ose*)
 		os=ose
 		;;
+	*mintelf)
+		os=mintelf
+		;;
 	*mint | mint[0-9]* | *MiNT | MiNT[0-9]*)
 		os=mint
 		;;
@@ -1523,6 +1530,12 @@ case $os in
 	none)
 		;;
 	*-eabi)
+		;;
+	-mintelf*)
+		os=mintelf
+		;;
+	-*mint | -mint[0-9]* | -*MiNT | -MiNT[0-9]*)
+		os=mint
 		;;
 	*)
 		echo Invalid configuration \`"$1"\': system \`"$os"\' not recognized 1>&2
