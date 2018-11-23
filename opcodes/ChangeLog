@@ -1,3 +1,42 @@
+2018-10-19  Tamar Christina  <tamar.christina@arm.com>
+
+	* arm-dis.c (UNKNOWN_INSTRUCTION_32BIT): Format specifier for arm mode.
+	(UNKNOWN_INSTRUCTION_16BIT): Format specifier for thumb mode.
+	(print_insn_arm, print_insn_thumb16, print_insn_thumb32): Use them.
+
+2018-10-16  Matthew Malcomson  <matthew.malcomson@arm.com>
+
+	* aarch64-opc.c (struct operand_qualifier_data): Change qualifier data
+	corresponding to AARCH64_OPND_QLF_S_4B qualifier.
+
+2018-10-05  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* i386-dis.c (rm_table): Add enclv.
+	* i386-opc.tbl: Add enclv.
+	* i386-tbl.h: Regenerated.
+
+2018-07-18  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR gas/23418
+	* i386-opc.h (Byte): Update comments.
+	(Word): Likewise.
+	(Dword): Likewise.
+	(Fword): Likewise.
+	(Qword): Likewise.
+	(Tbyte): Likewise.
+	(Xmmword): Likewise.
+	(Ymmword): Likewise.
+	(Zmmword): Likewise.
+	* i386-opc.tbl: Split vcvtps2qq, vcvtps2uqq, vcvttps2qq and
+	vcvttps2uqq.
+	* i386-tbl.h: Regenerated.
+
+2018-07-18  Nick Clifton  <nickc@redhat.com>
+
+	2.31.1 Release point.
+	* configure: Regenerate.
+	* po/opcodes.pot: Regenerate.
+
 2018-07-14  Nick Clifton  <nickc@redhat.com>
 
 	* configure: Regenerate.

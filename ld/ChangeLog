@@ -1,3 +1,131 @@
+2018-11-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR gas/23854
+	* testsuite/ld-i386/i386.exp: Run pr23854.
+	* testsuite/ld-x86-64/x86-64.exp: Likewwise.
+	* testsuite/ld-i386/pr23854.d: New file.
+	* testsuite/ld-i386/pr23854.s: Likewwise.
+	* testsuite/ld-i386/pr23854.d: Likewwise.
+	* testsuite/ld-x86-64/pr23854.d: Likewwise.
+	* testsuite/ld-x86-64/pr23854.s: Likewwise.
+
+2018-11-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/23818
+	* testsuite/ld-plugin/lto.exp: Run PR ld/23818 test.
+	* testsuite/ld-plugin/pr23818.d: New file.
+	* testsuite/ld-plugin/pr23818.t: Likewise.
+	* testsuite/ld-plugin/pr23818a.c: Likewise.
+	* testsuite/ld-plugin/pr23818b.c: Likewise.
+
+2018-08-12  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* testsuite/ld-x86-64/pr23486b.d: Swap pr23486a.s and pr23486a.s.
+
+2018-08-12  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/23428
+	* testsuite/ld-elf/dummy.s: New file.
+	* testsuite/ld-elf/linux-x86.S: Add X86_FEATURE_1_AND property.
+	* testsuite/ld-elf/linux-x86.exp: Add dummy.s to pr23428.
+
+2018-08-10  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/23486
+	* testsuite/ld-i386/i386.exp: Run PR ld/23486 tests.
+	* testsuite/ld-x86-64/x86-64.exp: Likewise.
+	* testsuite/ld-i386/pr23486a.d: New file.
+	* testsuite/ld-i386/pr23486b.d: Likewise.
+	* testsuite/ld-x86-64/pr23486a-x32.d: Likewise.
+	* testsuite/ld-x86-64/pr23486a.d: Likewise.
+	* testsuite/ld-x86-64/pr23486a.s: Likewise.
+	* testsuite/ld-x86-64/pr23486b-x32.d: Likewise.
+	* testsuite/ld-x86-64/pr23486b.d: Likewise.
+	* testsuite/ld-x86-64/pr23486b.s: Likewise.
+	* testsuite/ld-i386/property-3.r: Remove "x86 ISA used".
+	* testsuite/ld-i386/property-4.r: Likewise.
+	* testsuite/ld-i386/property-5.r: Likewise.
+	* testsuite/ld-i386/property-x86-ibt3a.d: Likewise.
+	* testsuite/ld-i386/property-x86-ibt3b.d: Likewise.
+	* testsuite/ld-i386/property-x86-shstk3a.d: Likewise.
+	* testsuite/ld-i386/property-x86-shstk3b.d: Likewise.
+	* testsuite/ld-x86-64/property-3.r: Likewise.
+	* testsuite/ld-x86-64/property-4.r: Likewise.
+	* testsuite/ld-x86-64/property-5.r: Likewise.
+	* testsuite/ld-x86-64/property-x86-ibt3a-x32.d: Likewise.
+	* testsuite/ld-x86-64/property-x86-ibt3a.d: Likewise.
+	* testsuite/ld-x86-64/property-x86-ibt3b-x32.d: Likewise.
+	* testsuite/ld-x86-64/property-x86-ibt3b.d: Likewise.
+	* testsuite/ld-x86-64/property-x86-shstk3a-x32.d: Likewise.
+	* testsuite/ld-x86-64/property-x86-shstk3a.d: Likewise.
+	* testsuite/ld-x86-64/property-x86-shstk3b-x32.d: Likewise.
+	* testsuite/ld-x86-64/property-x86-shstk3b.d: Likewise.
+
+2018-08-10  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* testsuite/ld-x86-64/property-x86-3.s: Use ".p2align 2" to
+	align .note.gnu.property section if __64_bit__ is undefined.
+
+2018-08-01  Alan Modra  <amodra@gmail.com>
+
+	* testsuite/ld-powerpc/powerpc.exp: Run tlsopt5 with hash-style
+	specified.
+
+2018-08-01  Alan Modra  <amodra@gmail.com>
+
+	* testsuite/ld-powerpc/powerpc.exp: Run tlsopt5 with plt alignment.
+	* testsuite/ld-powerpc/tlsopt5.s: Add extra call.
+	* testsuite/ld-powerpc/tlsopt5.wf: Adjust expected output.
+	* testsuite/ld-powerpc/tlsopt5.d: Likewise.
+
+2018-08-07  Nick Clifton  <nickc@redhat.com>
+
+	* po/bg.po: Updated Bulgarian translation.
+
+2018-08-01  Roland McGrath  <mcgrathr@google.com>
+
+	* testsuite/ld-aarch64/ifunc-1-local.d: Adjust regexps to match
+	the offsets emitted by aarch64-elf configurations.
+	* testsuite/ld-aarch64/ifunc-1.d: Likewise.
+	* testsuite/ld-aarch64/ifunc-2-local.d: Likewise.
+	* testsuite/ld-aarch64/ifunc-2.d: Likewise.
+	* testsuite/ld-aarch64/ifunc-21.d: Likewise.
+	* testsuite/ld-aarch64/ifunc-3a.d: Likewise.
+
+2018-07-23  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/23428
+	* testsuite/ld-elf/linux-x86.S: New file.
+	* testsuite/ld-elf/linux-x86.exp: Likewise.
+	* testsuite/ld-elf/pr23428.c: Likewise.
+	* testsuite/ld-elf/sec64k.exp: Pass "-z noseparate-code" to ld
+	for Linux/x86 targets.
+	* testsuite/ld-i386/abs-iamcu.d: Likewise.
+	* testsuite/ld-i386/abs.d: Likewise.
+	* testsuite/ld-i386/pr12718.d: Likewise.
+	* testsuite/ld-i386/pr12921.d: Likewise.
+	* testsuite/ld-x86-64/abs-k1om.d: Likewise.
+	* testsuite/ld-x86-64/abs-l1om.d: Likewise.
+	* testsuite/ld-x86-64/abs.d: Likewise.
+	* testsuite/ld-x86-64/pr12718.d: Likewise.
+	* testsuite/ld-x86-64/pr12921.d: Likewise.
+	* testsuite/ld-linkonce/zeroeh.ld: Discard .note.gnu.property
+	section.
+	* testsuite/ld-scripts/print-memory-usage.t: Likewise.
+	* testsuite/ld-scripts/size-2.t: Likewise.
+	* testsuite/lib/ld-lib.exp (run_ld_link_exec_tests): Use ld to
+	create executable if language is "asm".
+
+2018-07-18  Nick Clifton  <nickc@redhat.com>
+
+	2.31.1 Release point.
+	* configure: Regenerate.
+	* po/ld.pot: Regenerate.
+
+2018-07-18  Nick Clifton  <nickc@redhat.com>
+
+	* po/es.po: Updated Spanish translation.
+
 2018-07-14  Nick Clifton  <nickc@redhat.com>
 
 	* configure: Regenerate.

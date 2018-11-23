@@ -1,3 +1,25 @@
+2018-08-06  Cary Coutant  <ccoutant@gmail.com>
+
+	PR gold/23455
+	* options.h (General_options): Add --warn-drop-version option.
+	* symtab.cc (Symbol_table::set_dynsym_indexes): Check it.
+
+2018-08-06  Cary Coutant  <ccoutant@gmail.com>
+
+	* target.h (Sized_target::record_gnu_property): Change first two
+	parameters to unsigned int.
+	* x86_64.cc (Target_x86_64::record_gnu_property): Likewise.
+
+2018-07-18  Nick Clifton  <nickc@redhat.com>
+
+	2.31.1 Release point.
+	* Makefile.am: Replace spurious spaces with tabs.
+	* po/gold.pot: Regenerate.
+
+2018-07-18  Nick Clifton  <nickc@redhat.com>
+
+	* po/fr.po: Updated French translation.
+
 2018-07-16  Nick Clifton  <nickc@redhat.com>
 
 	* Import patch from mainline:

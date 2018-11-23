@@ -1,3 +1,146 @@
+2018-11-15  Claudiu Zissulescu  <claziss@synopsys.com>
+
+	Backport from mainline
+	2018-11-09  Cupertino Miranda  <cmiranda@synopsys.com>
+	* arc-got.h (arc_got_entry_type_for_reloc): Changed to
+	  correct static TLS relocs.
+	* elf32-arc.c (elf_arc_check_relocs): Introduced warning to
+	  TLS relocs which require -fPIC.
+	  (arc_create_forced_local_got_entries_for_tls): Created.
+	  Traverses list of GOT entries to be resolved statically
+	  when needed.
+	  (elf_arc_finish_dynamic_sections): Changed. Calls
+	  arc_create_forced_local_got_entries_for_tls for each known
+	  possibly GOT symbol.
+
+2018-11-15  Claudiu Zissulescu  <claziss@synopsys.com>
+
+	Backport from mainline
+	2018-11-09  Claudiu Zissulescu  <claziss@synopsys.com>
+	* arc-got.h (arc_get_local_got_ents): Revamp it; use
+	elf_local_got_ents to store the local got list.
+	(get_got_entry_list_for_symbo): Restructure it.
+	* elf32-arc.c (elf_arc_relocate_section): Correct the call to
+	get_got_entry_list_for_symbol.
+
+2018-11-15  Claudiu Zissulescu  <claziss@synopsys.com>
+
+	Backport from mainline
+	2018-09-06  Cupertino Miranda <cmiranda@synopsys.com>
+	* arc-got.h (relocate_fix_got_relocs_for_got_info): Changed. Take
+	TLS section alignment in consideration for this relocation.
+	* elf32-arc.c (FINAL_SECTSTART): Added this formula macro.
+	(ARC_TLS_DTPOFF) Updated reloc to use new created macro instead.
+
+2018-11-15  Claudiu Zissulescu  <claziss@synopsys.com>
+
+	Backport from mainline
+	2018-08-01  Cupertino Miranda <cmiranda@synopsys.com>
+	* arc-got.h (relocate_fix_got_relocs_for_got_info): Changed, fixed
+	TCB_SIZE offsize to include section alignment.
+	* elf32-arc.c (arc_special_overflow_checks): Likewise.
+
+2018-11-15  Claudiu Zissulescu  <claziss@synopsys.com>
+
+	Backport from mainline
+	2018-03-02  Cupertino Miranda <cmiranda@synopsys.com>
+	* elf32-arc.c (elf_arc_check_relocs): Changed.
+
+2018-11-15  Claudiu Zissulescu  <claziss@synopsys.com>
+
+	Backport from mainline
+	2018-03-02  Cupertino Miranda <cmiranda@synopsys.com>
+	* elf32-arc.c (elf_arc_check_relocs): Changed.
+
+2018-11-15  Claudiu Zissulescu  <claziss@synopsys.com>
+
+	Backport from mainline
+	2018-03-02  Cupertino Miranda <cmiranda@synopsys.com>
+	* elf32-arc.c (elf_arc_finish_dynamic_symbol) Return FALSE in case
+	arc_htab is NULL.
+
+2018-11-15  Claudiu Zissulescu  <claziss@synopsys.com>
+
+	Backport from mainline
+	2018-03-02  Cupertino Miranda  <cmiranda@synopsys.com>a
+	* arc-got.h (get_got_entry_list_for_symbol): Changed.
+	* ef32-arc.c (struct elf_arc_link_hash_entry): Moved and changed.
+	(elf_arc_link_hash_newfunc): Changed.
+	(arc_elf_link_hash_table_create): Removed old initializations.
+	(elf_arc_relocate_section, elf_arc_finish_dynamic_symbol): Changed.
+
+2018-11-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/23818
+	* elflink.c (_bfd_elf_link_assign_sym_version): Hide symbols
+	defined in discarded input sections.
+
+2018-09-12  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/23499
+	* elf.c (_bfd_elf_get_symbol_version_string): Return
+	_("<corrupt>") for corrupt symbol version info.
+
+2018-09-12  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/23499
+	* elflink.c (bfd_elf_record_link_assignment): Always clear
+	h->verinfo.verdef when overriding a dynamic definition.
+
+2018-08-12  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/23428
+	* elfxx-x86.c (_bfd_x86_elf_link_setup_gnu_properties): Don't
+	add X86_ISA_1_NEEDED property only if existing properties won't
+	be removed.
+
+2018-08-10  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/23486
+	* elfxx-x86.c (_bfd_x86_elf_merge_gnu_properties): Remove
+	GNU_PROPERTY_X86_ISA_1_USED if an input file doesn't have it.
+	(_bfd_x86_elf_link_setup_gnu_properties): Adding the
+	GNU_PROPERTY_X86_ISA_1_NEEDED, instead of
+	GNU_PROPERTY_X86_ISA_1_USED, property.
+
+2018-08-07  Alan Modra  <amodra@gmail.com>
+
+	* elf64-ppc.c (ppc64_elf_relocate_section): Don't skip first
+	instruction of __tls_get_addr_opt stub.
+	(plt_stub_size): Omit ALWAYS_EMIT_R2SAVE condition when
+	dealing with __tls_get_addr_opt stub.
+	(build_tls_get_addr_stub, ppc_size_one_stub): Likewise.
+
+2018-08-01  Alan Modra  <amodra@gmail.com>
+
+	* elf64-ppc.c (plt_stub_pad): Delay plt_stub_size call until needed.
+	(ppc_build_one_stub): Don't set stub_offset, instead assert that
+	it is sane.  Don't adjust stub_offset for alignment.  Adjust size
+	calculation.  Use "targ" temp when calculating offsets.
+	(ppc_size_one_stub): Set stub_offset here.  Use "targ" temp when
+	calculating offsets.  Adjust for alignment before setting
+	tls_get_addr_opt_bctrl.
+
+2018-07-23  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/23428
+	* elfxx-x86.c (_bfd_x86_elf_link_setup_gnu_properties): If the
+	separate code program header is needed, make sure that the first
+	read-only PT_LOAD segment has no code by adding a
+	GNU_PROPERTY_X86_ISA_1_USED note.
+
+2018-07-18  Nick Clifton  <nickc@redhat.com>
+
+	* development.sh: Set to true.
+
+2018-07-18  Nick Clifton  <nickc@redhat.com>
+
+	2.31.1 Release point.
+	* version.m4: Set to 2.31.1
+	* development.sh: Set to false.
+	* configure: Regenerate.
+	* po/bfd.pot: Regenerate.
+
 2018-07-14  Nick Clifton  <nickc@redhat.com>
 
 	* version.m4: Update to 2.31.0.
