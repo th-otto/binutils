@@ -342,7 +342,10 @@ ldfile_open_file_search (const char *arch,
     {
       if (entry->flags.sysrooted && IS_ABSOLUTE_PATH (entry->filename))
 	{
-	  char *name = concat (ld_sysroot, entry->filename,
+	  char *name;
+	  if (strncmp(ld_sysroot, entry->filename, strlen(ld_sysroot)) == 0 && ldfile_try_open_bfd (entry->filename, entry))
+	return true;
+	  name = concat (ld_sysroot, entry->filename,
 			       (const char *) NULL);
 	  if (ldfile_try_open_bfd (name, entry))
 	    {
