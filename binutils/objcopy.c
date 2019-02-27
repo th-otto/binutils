@@ -1661,6 +1661,9 @@ filter_symbols (bfd *abfd, bfd *obfd, asymbol **osyms,
       if (keep && is_strip_section (abfd, bfd_asymbol_section (sym)))
 	keep = FALSE;
 
+      if (strip_symbols != STRIP_ALL && (flags & BSF_CONSTRUCTOR))
+         keep = TRUE;
+
       if (keep)
 	{
 	  if ((flags & BSF_GLOBAL) != 0
