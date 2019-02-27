@@ -1725,6 +1725,9 @@ filter_symbols (bfd *abfd, bfd *obfd, asymbol **osyms,
       if (keep && is_strip_section (abfd, bfd_asymbol_section (sym)))
 	keep = false;
 
+      if (strip_symbols != STRIP_ALL && (flags & BSF_CONSTRUCTOR))
+         keep = true;
+
       if (keep)
 	{
 	  if (((flags & (BSF_GLOBAL | BSF_GNU_UNIQUE))
