@@ -1199,6 +1199,9 @@ case "${target}" in
   kvx-*-*)
     noconfigdirs="$noconfigdirs gdb gdbserver sim"
     ;;
+  m68k-*-mint*)
+    noconfigdirs="$noconfigdirs gdb libdecnumber sim"
+    ;;
   mmix-*-*)
     noconfigdirs="$noconfigdirs gdb"
     ;;
