@@ -35,7 +35,7 @@ EXEEXT_FOR_BUILD = @EXEEXT_FOR_BUILD@
 YACC = `if [ -f ../bison/bison ]; then echo ../bison/bison -y -L$(srcdir)/../bison/; else echo @YACC@; fi`
 YFLAGS = -d
 LEX = `if [ -f ../flex/flex ]; then echo ../flex/flex; else echo @LEX@; fi`
-LEXLIB = @LEXLIB@
+#LEXLIB = @LEXLIB@
 
 # Automake 1.10+ disables lex and yacc output file regeneration if
 # maintainer mode is disabled.  Avoid this.
