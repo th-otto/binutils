@@ -265,6 +265,7 @@ ALL_MACHINES_CFILES = \
 BFD32_BACKENDS = \
 	aout-cris.lo \
 	aout-ns32k.lo \
+	aout0.lo \
 	aout32.lo \
 	cf-i386lynx.lo \
 	coff-go32.lo \
@@ -397,6 +398,7 @@ BFD32_BACKENDS = \
 BFD32_BACKENDS_CFILES = \
 	aout-cris.c \
 	aout-ns32k.c \
+	aout0.c \
 	aout32.c \
 	cf-i386lynx.c \
 	coff-go32.c \
@@ -684,7 +686,7 @@ CFILES = $(SOURCE_CFILES) $(BUILD_CFILES)
 ## This is a list of all .h files in the source tree minus those that
 ## are processed to produce other .h files
 SOURCE_HFILES = \
-	aout-target.h aoutx.h arc-got.h arc-plt.h \
+	aout-target.h aoutf1.h aoutx.h arc-got.h arc-plt.h \
 	coff-arm.h coff-bfd.h coffcode.h coffswap.h \
 	cpu-aarch64.h cpu-arm.h cpu-h8300.h cpu-m68k.h cpu-riscv.h \
 	ecoff-bfd.h ecoffswap.h \
