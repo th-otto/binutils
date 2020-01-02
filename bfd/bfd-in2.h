@@ -2818,6 +2818,15 @@ ATTRIBUTE_WARN_UNUSED_RESULT;
 
 time_t bfd_get_current_time (time_t now);
 
+/* MiNT executable support routines for the linker.  */
+
+extern bool bfd_m68kmint_set_extended_flags
+  (bfd *, flagword);
+extern bool bfd_m68kmint_set_stack_size
+  (bfd *, bfd_signed_vma);
+extern bool bfd_m68kmint_add_tpa_relocation_entry
+  (bfd *, bfd_vma);
+
 /* Extracted from cache.c.  */
 bool bfd_cache_close (bfd *abfd);
 
