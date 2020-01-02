@@ -37,6 +37,10 @@ case "$target" in
 	LIBPATH_SUFFIX=32
 	LIBPATH_SUFFIX_SKIP=64
 	;;
+      *64*)
+	LIBPATH_SUFFIX=64
+	LIBPATH_SUFFIX_SKIP=32
+	;;
     esac
     ;;
 esac
