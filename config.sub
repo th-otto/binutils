@@ -824,6 +824,11 @@ case $basic_machine in
 		cpu=m68000
 		vendor=convergent
 		;;
+	*mintelf*)
+		cpu=m68k
+		vendor=atari
+		os=mintelf
+		;;
 	*mint | mint[0-9]* | *MiNT | *MiNT[0-9]*)
 		cpu=m68k
 		vendor=atari
@@ -1475,6 +1480,9 @@ case $os in
 	ose*)
 		os=ose
 		;;
+	*mintelf)
+		os=mintelf
+		;;
 	*mint | mint[0-9]* | *MiNT | MiNT[0-9]*)
 		os=mint
 		;;
@@ -1499,6 +1507,12 @@ case $os in
 		# These are machine code file formats, not OSes
 		obj=$os
 		os=
+		;;
+	-mintelf*)
+		os=mintelf
+		;;
+	-*mint | -mint[0-9]* | -*MiNT | -MiNT[0-9]*)
+		os=mint
 		;;
 	*)
 		# No normalization, but not necessarily accepted, that comes below.
