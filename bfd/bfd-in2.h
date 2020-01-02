@@ -2742,6 +2742,15 @@ void *bfd_mmap (bfd *abfd, void *addr, bfd_size_type len,
     int prot, int flags, file_ptr offset,
     void **map_addr, bfd_size_type *map_len);
 
+/* MiNT executable support routines for the linker.  */
+
+extern bool bfd_m68kmint_set_extended_flags
+  (bfd *, flagword);
+extern bool bfd_m68kmint_set_stack_size
+  (bfd *, bfd_signed_vma);
+extern bool bfd_m68kmint_add_tpa_relocation_entry
+  (bfd *, bfd_vma);
+
 /* Extracted from bfdwin.c.  */
 struct _bfd_window_internal;
 

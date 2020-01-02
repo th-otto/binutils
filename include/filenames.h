@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 #if defined(__MSDOS__) || (defined(_WIN32) && ! defined(__CYGWIN__)) || \
-    defined(__OS2__)
+    defined(__OS2__) || defined (__MINT__)
 #  ifndef HAVE_DOS_BASED_FILE_SYSTEM
 #    define HAVE_DOS_BASED_FILE_SYSTEM 1
 #  endif

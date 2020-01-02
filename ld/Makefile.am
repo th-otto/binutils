@@ -319,6 +319,8 @@ ALL_EMULATION_SOURCES = \
 	em68kelf.c \
 	em68kelfnbsd.c \
 	em68kaout.c \
+	em68kmintelf.c \
+	em68kmint.c \
 	em9s12zelf.c \
 	emcorepe.c \
 	emn10200.c \
