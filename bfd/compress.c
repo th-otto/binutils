@@ -350,7 +350,7 @@ bfd_get_full_section_contents (bfd *abfd, sec_ptr sec, bfd_byte **ptr)
 	return false;
       if (p == NULL)
 	{
-	  p = (bfd_byte *) bfd_malloc (sz);
+	  p = (bfd_byte *) bfd_zmalloc (sz);
 	  if (p == NULL)
 	    return false;
 	  *ptr = p;

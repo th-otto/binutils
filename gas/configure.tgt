@@ -294,6 +294,8 @@ case ${generic_target} in
   m68k-*-linux-*)			fmt=elf em=linux ;;
   m68k-*-uclinux*)			fmt=elf em=uclinux ;;
   m68k-*-gnu*)				fmt=elf ;;
+  m68k-*-mintelf*)			fmt=elf em=mint bfd_gas=yes ;;
+  m68k-*-mint*)				fmt=aout em=mint bfd_gas=yes ;;
   m68k-*-netbsd*)			fmt=elf em=nbsd ;;
   m68k-*-haiku*)			fmt=elf em=haiku ;;
 

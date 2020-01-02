@@ -447,6 +447,15 @@ uint64_t bfd_get_bits (const void *, int, bool);
 void bfd_put_bits (uint64_t, void *, int, bool);
 
 
+/* MiNT executable support routines for the linker.  */
+
+extern bool bfd_m68kmint_set_extended_flags
+  (bfd *, flagword);
+extern bool bfd_m68kmint_set_stack_size
+  (bfd *, bfd_signed_vma);
+extern bool bfd_m68kmint_add_tpa_relocation_entry
+  (bfd *, bfd_vma);
+
 /* mmap hacks */
 
 struct _bfd_window_internal;

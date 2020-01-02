@@ -77,6 +77,9 @@ case $targ in
  mips*-*-irix5* | mips*-*-irix6*)
     # Not obsolete
     ;;
+ m68*-*-mint*)
+    # Not obsolete
+    ;;
  *-adobe-* | \
  *-go32-rtems* | \
  *-sony-* | \
@@ -824,6 +827,16 @@ case "${targ}" in
   m68hc12-*-* | m6812-*-*)
     targ_defvec=m68hc12_elf32_vec
     targ_selvecs="m68hc11_elf32_vec m68hc12_elf32_vec"
+    ;;
+
+  m68*-*-mintelf*)
+    targ_defvec=m68k_elf32_vec
+    targ_selvecs="aout0_be_vec m68k_aout_mintprg_vec"
+    ;;
+  m68*-*-mint*)
+    targ_defvec=aout0_be_vec
+    targ_selvecs=m68k_aout_mintprg_vec
+    targ_underscore=yes
     ;;
 
   m68*-*-*)

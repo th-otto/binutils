@@ -388,7 +388,7 @@ look_for_default (char *cmd, const char *prefix, int end_prefix,
   sprintf (cmd + end_prefix, "%s", DEFAULT_PREPROCESSOR_CMD);
 
   if (
-#if defined (__DJGPP__) || defined (__CYGWIN__) || defined (_WIN32)
+#if defined (__DJGPP__) || defined (__CYGWIN__) || defined (_WIN32) || defined (__MINT__)
       strchr (cmd, '\\') ||
 #endif
       strchr (cmd, '/'))
@@ -511,7 +511,7 @@ read_rc_file (const char *filename, const char *preprocessor,
 	  if (*cp == '-')
 	    dash = cp;
 	  if (
-#if defined (__DJGPP__) || defined (__CYGWIN__) || defined(_WIN32)
+#if defined (__DJGPP__) || defined (__CYGWIN__) || defined(_WIN32) || defined (__MINT__)
 	      *cp == ':' || *cp == '\\' ||
 #endif
 	      *cp == '/')
