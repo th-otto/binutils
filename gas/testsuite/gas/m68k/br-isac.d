@@ -1,6 +1,7 @@
 #name: br-isac.d
 #objdump: -dr
 #as: -march=isac -pcrel
+#not-target: m68k-*-mint*
 
 .*:     file format .*
 

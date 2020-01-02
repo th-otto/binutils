@@ -1309,6 +1309,8 @@ NAME (aout, set_section_contents) (bfd *abfd,
 static bool
 aout_get_external_symbols (bfd *abfd)
 {
+  if (bfd_get_flavour(abfd) != bfd_target_aout_flavour)
+    return false;
   if (obj_aout_external_syms (abfd) == NULL)
     {
       bfd_size_type count;
@@ -1850,13 +1852,32 @@ emit_stringtab (bfd *abfd, struct bfd_strtab_hash *tab)
 {
   bfd_byte buffer[BYTES_IN_WORD];
   size_t amt = BYTES_IN_WORD;
+  bfd_size_type odd;
+
+  /* The MiNT backend writes past the string table.  It therefore has to
+     know about the table size.  */
+  obj_aout_external_string_size (abfd) = _bfd_stringtab_size (tab) +
+    BYTES_IN_WORD;
+  /* For MiNT atleast, the size of the string table should be even,
+     or the TPA relocation (and its first longword) will start on
+     an odd address */
+  odd = obj_aout_external_string_size (abfd) & 1;
+  obj_aout_external_string_size (abfd) += odd;
 
   /* The string table starts with the size.  */
-  PUT_WORD (abfd, _bfd_stringtab_size (tab) + BYTES_IN_WORD, buffer);
+  PUT_WORD (abfd, obj_aout_external_string_size (abfd), buffer);
   if (bfd_write (buffer, amt, abfd) != amt)
     return false;
 
-  return _bfd_stringtab_emit (abfd, tab);
+  if (_bfd_stringtab_emit (abfd, tab) == false)
+    return false;
+  if (odd)
+    {
+      buffer[0] = 0;
+      if (bfd_write (buffer, 1, abfd) != 1)
+        return false;
+    }
+  return true;
 }
 
 bool
@@ -4269,10 +4290,17 @@ aout_link_input_section_std (struct aout_final_link_info *flaginfo,
 		(flaginfo->info, name, input_bfd, input_section, r_addr, true);
 	    }
 
+#ifdef MY_final_link_relocate_rel
+	  r = MY_final_link_relocate_rel (howto,
+					  input_bfd, input_section,
+					  contents, r_addr, relocation,
+					  (bfd_vma) 0, rel);
+#else
 	  r = MY_final_link_relocate (howto,
 				      input_bfd, input_section,
 				      contents, r_addr, relocation,
 				      (bfd_vma) 0);
+#endif
 	}
 
       if (r != bfd_reloc_ok)

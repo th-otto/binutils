@@ -102,7 +102,7 @@ struct aout_link_hash_entry
 {
   struct bfd_link_hash_entry root;
   /* Whether this symbol has been written out.  */
-  bool written;
+  int written;
   /* Symbol index in output file.  */
   int indx;
 };
@@ -419,6 +419,10 @@ struct aoutdata
      table, used when linking on SunOS.  This is indexed by the symbol
      index.  */
   bfd_vma *local_got_offsets;
+
+  /* A pointer for data used by aout extensions.  (Currently only used
+     by MiNT executables (see prg-mint.c).  */
+  void *ext;
 };
 
 struct  aout_data_struct
@@ -444,6 +448,7 @@ struct  aout_data_struct
 #define obj_aout_external_string_size(bfd) (adata (bfd).external_string_size)
 #define obj_aout_sym_hashes(bfd)	   (adata (bfd).sym_hashes)
 #define obj_aout_dynamic_info(bfd)	   (adata (bfd).dynamic_info)
+#define obj_aout_ext(bfd)              (adata (bfd).ext)
 
 /* We take the address of the first element of an asymbol to ensure that the
    macro is only ever applied to an asymbol.  */
