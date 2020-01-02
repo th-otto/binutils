@@ -754,7 +754,7 @@ bfd_get_full_section_contents (bfd *abfd, sec_ptr sec, bfd_byte **ptr)
     case COMPRESS_SECTION_NONE:
       if (p == NULL)
 	{
-	  p = (bfd_byte *) bfd_malloc (allocsz);
+	  p = (bfd_byte *) bfd_zmalloc (allocsz);
 	  if (p == NULL)
 	    {
 	      /* PR 20801: Provide a more helpful error message.  */
@@ -800,7 +800,7 @@ bfd_get_full_section_contents (bfd *abfd, sec_ptr sec, bfd_byte **ptr)
 	goto fail_compressed;
 
       if (p == NULL)
-	p = (bfd_byte *) bfd_malloc (allocsz);
+	p = (bfd_byte *) bfd_zmalloc (allocsz);
       if (p == NULL)
 	goto fail_compressed;
 
@@ -831,7 +831,7 @@ bfd_get_full_section_contents (bfd *abfd, sec_ptr sec, bfd_byte **ptr)
 	return false;
       if (p == NULL)
 	{
-	  p = (bfd_byte *) bfd_malloc (allocsz);
+	  p = (bfd_byte *) bfd_zmalloc (allocsz);
 	  if (p == NULL)
 	    return false;
 	  *ptr = p;
