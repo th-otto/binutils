@@ -44,6 +44,10 @@ static int arc_mmap_writeout (int fd, void *header, size_t headersz,
 			      const char **errmsg);
 static int arc_mmap_unmap (void *header, size_t headersz, const char **errmsg);
 
+#if defined(__MINT__) || defined(__clang__)
+#define __thread
+#endif
+
 /* bsearch() internal state.  */
 static __thread char *search_nametbl;
 
