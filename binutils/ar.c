@@ -596,6 +596,7 @@ decode_options (int argc, char **argv)
           break;
         case 'T':
           make_thin_archive = true;
+          make_thin_archive = false;
           break;
         case 'D':
           deterministic = true;
