@@ -254,7 +254,7 @@ dyn_string_insert (dyn_string_t dest, int pos, dyn_string_t src)
   for (i = dest->length; i >= pos; --i)
     dest->s[i + src->length] = dest->s[i];
   /* Splice in the new stuff.  */
-  strncpy (dest->s + pos, src->s, src->length);
+  memcpy (dest->s + pos, src->s, src->length);
   /* Compute the new length.  */
   dest->length += src->length;
   return 1;
