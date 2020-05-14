@@ -463,7 +463,7 @@ write_dri_symbol (bfd *abfd, const char *name, int type, bfd_vma value)
 
   if (is_long_name)
     {
-      char more_name[DRI_SYMBOL_SIZE];
+      char more_name[DRI_SYMBOL_SIZE + 1];
 
       strncpy (more_name, name + sizeof (sym.a_name), DRI_SYMBOL_SIZE);
 
@@ -1616,7 +1616,7 @@ MY (print_private_bfd_data) (bfd *abfd, void *ptr)
   fprintf (file, "\n");
 
   fprintf (file, " GEMDOS flags: 0x%08lx\n", (unsigned long) myinfo->prg_flags);
-  fprintf (file, "Start address: 0x%08lx\n", bfd_get_start_address (abfd));
+  fprintf (file, "Start address: 0x%08lx\n", (unsigned long) bfd_get_start_address (abfd));
 
   /* Stack size.  */
   if (myinfo->stkpos != 0)

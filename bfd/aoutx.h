@@ -1863,18 +1863,32 @@ emit_stringtab (bfd *abfd, struct bfd_strtab_hash *tab)
 {
   bfd_byte buffer[BYTES_IN_WORD];
   size_t amt = BYTES_IN_WORD;
+  bfd_size_type odd;
 
   /* The MiNT backend writes past the string table.  It therefore has to
      know about the table size.  */
   obj_aout_external_string_size (abfd) = _bfd_stringtab_size (tab) +
     BYTES_IN_WORD;
+  /* For MiNT atleast, the size of the string table should be even,
+     or the TPA relocation (and its first longword) will start on
+     an odd address */
+  odd = obj_aout_external_string_size (abfd) & 1;
+  obj_aout_external_string_size (abfd) += odd;
 
   /* The string table starts with the size.  */
-  PUT_WORD (abfd, _bfd_stringtab_size (tab) + BYTES_IN_WORD, buffer);
+  PUT_WORD (abfd, obj_aout_external_string_size (abfd), buffer);
   if (bfd_bwrite ((void *) buffer, amt, abfd) != amt)
     return false;
 
-  return _bfd_stringtab_emit (abfd, tab);
+  if (_bfd_stringtab_emit (abfd, tab) == false)
+    return false;
+  if (odd)
+    {
+      buffer[0] = 0;
+      if (bfd_bwrite ((void *) buffer, 1, abfd) != 1)
+        return false;
+    }
+  return true;
 }
 
 bool
