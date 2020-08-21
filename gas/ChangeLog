@@ -1,3 +1,61 @@
+2020-07-06  Stefan Schulze Frielinghaus  <stefansf@linux.ibm.com>
+
+	Backport from mainline.
+	2020-05-26  Stefan Schulze Frielinghaus  <stefansf@linux.ibm.com>
+
+	* testsuite/gas/s390/zarch-z13.d: Add regexp checks for vector
+	load/store instruction variants with alignment hints.
+	* testsuite/gas/s390/zarch-z13.s: Emit new vector load/store
+	instruction variants with alignment hints.
+
+2020-06-10  Alex Coplan  <alex.coplan@arm.com>
+
+	Backport from master
+	2020-06-01  Alex Coplan  <alex.coplan@arm.com>
+	* write.c (relax_segment): Fix handling of negative offset when
+	relaxing an rs_org frag.
+	* testsuite/gas/aarch64/org-neg.d: New test.
+	* testsuite/gas/aarch64/org-neg.l: Error output for test.
+	* testsuite/gas/aarch64/org-neg.s: Input for test.
+	* testsuite/gas/arm/org-neg.d: New test.
+	* testsuite/gas/arm/org-neg.l: Error output for test.
+	* testsuite/gas/arm/org-neg.s: Input for test.
+
+2020-05-18  Alexander Fedotov <alfedotov@gmail.com>
+
+	PR 25992
+	* config/tc-arm.c : Add arm_ext_v8r feature.
+	(it_fsm_post_encode): Check arm_ext_v8r feature.
+	(get_aeabi_cpu_arch_from_fset): Check arm_ext_v8r feature.
+
+2020-05-18  Alan Modra  <amodra@gmail.com>
+
+	* symbols.c (resolve_symbol_value): Invoke LOCAL_SYMBOL_CHECK
+	before looking at add_symbol->sy_flags.
+
+2020-05-15  Alan Modra  <amodra@gmail.com>
+	    Alex Coplan  <alex.coplan@arm.com>
+
+	* symbols.c (struct local_symbol): Update comment.
+	(resolve_symbol_value): For resolved symbols equated to other
+	symbols, verify that the referenced symbol is not a local_symbol
+	before accessing sy_value.  Don't leave symbol loops during
+	finalize_syms resolution.
+	* testsuite/gas/all/assign-bad-recursive.d: New test.
+	* testsuite/gas/all/assign-bad-recursive.l: Error output for test.
+	* testsuite/gas/all/assign-bad-recursive.s: Assembly for test.
+	* testsuite/gas/all/gas.exp: Run it.
+
+2020-05-07  Andre Vieira  <andre.simoesdiasvieira@arm.com>
+
+	Backport from mainline.
+	2020-05-04  Andre Vieira  <andre.simoesdiasvieira@arm.com>
+
+	PR gas/25863
+	* config/tc-arm.c (do_mve_vmull): Fix scalar and NEON parsing of vmul.
+	* testsuite/gas/arm/mve-scalar-vmult-it.d: New test.
+	* testsuite/gas/arm/mve-scalar-vmult-it.s: New test.
+
 2020-04-21  Tamar Christina  <tamar.christina@arm.com>
 
 	Backport from mainline.
