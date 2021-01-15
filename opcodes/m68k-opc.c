@@ -955,12 +955,12 @@ const struct m68k_opcode m68k_opcodes[] =
 
 {"fmovemx", 4,	two(0xF000, 0xF800), two(0xF1C0, 0xFF8F), "IiDk&s", mfloat },
 {"fmovemx", 4,	two(0xF020, 0xE800), two(0xF1F8, 0xFF8F), "IiDk-s", mfloat },
-{"fmovemx", 4,	two(0xF000, 0xD800), two(0xF1C0, 0xFF8F), "Ii&sDk", mfloat },
+{"fmovemx", 4,	two(0xF000, 0xD800), two(0xF1C0, 0xFF8F), "Ii!sDk", mfloat },
 {"fmovemx", 4,	two(0xF018, 0xD800), two(0xF1F8, 0xFF8F), "Ii+sDk", mfloat },
 {"fmovemx", 4,	two(0xF000, 0xF000), two(0xF1C0, 0xFF00), "Idl3&s", mfloat },
 {"fmovemx", 4,	two(0xF000, 0xF000), two(0xF1C0, 0xFF00), "Id#3&s", mfloat },
-{"fmovemx", 4,	two(0xF000, 0xD000), two(0xF1C0, 0xFF00), "Id&sl3", mfloat },
-{"fmovemx", 4,	two(0xF000, 0xD000), two(0xF1C0, 0xFF00), "Id&s#3", mfloat },
+{"fmovemx", 4,	two(0xF000, 0xD000), two(0xF1C0, 0xFF00), "Id!sl3", mfloat },
+{"fmovemx", 4,	two(0xF000, 0xD000), two(0xF1C0, 0xFF00), "Id!s#3", mfloat },
 {"fmovemx", 4,	two(0xF020, 0xE000), two(0xF1F8, 0xFF00), "IdL3-s", mfloat },
 {"fmovemx", 4,	two(0xF020, 0xE000), two(0xF1F8, 0xFF00), "Id#3-s", mfloat },
 {"fmovemx", 4,	two(0xF018, 0xD000), two(0xF1F8, 0xFF00), "Id+sl3", mfloat },
@@ -978,18 +978,18 @@ const struct m68k_opcode m68k_opcodes[] =
 {"fmovem", 4,	two(0xF000, 0xF000), two(0xF1C0, 0xFF00), "Iil3ys", cfloat },
 {"fmovem", 4,	two(0xF000, 0xF000), two(0xF1C0, 0xFF00), "Ii#3ys", cfloat },
 
-{"fmovem", 4,	two(0xF020, 0xE000), two(0xF1F8, 0xFF00), "IdL3-s", mfloat },
-{"fmovem", 4,	two(0xF000, 0xF000), two(0xF1C0, 0xFF00), "Idl3&s", mfloat },
-{"fmovem", 4,	two(0xF018, 0xD000), two(0xF1F8, 0xFF00), "Id+sl3", mfloat },
-{"fmovem", 4,	two(0xF000, 0xD000), two(0xF1C0, 0xFF00), "Id&sl3", mfloat },
-{"fmovem", 4,	two(0xF020, 0xE000), two(0xF1F8, 0xFF00), "Id#3-s", mfloat },
-{"fmovem", 4,	two(0xF020, 0xE800), two(0xF1F8, 0xFF8F), "IiDk-s", mfloat },
-{"fmovem", 4,	two(0xF000, 0xF000), two(0xF1C0, 0xFF00), "Id#3&s", mfloat },
-{"fmovem", 4,	two(0xF000, 0xF800), two(0xF1C0, 0xFF8F), "IiDk&s", mfloat },
-{"fmovem", 4,	two(0xF018, 0xD000), two(0xF1F8, 0xFF00), "Id+s#3", mfloat },
-{"fmovem", 4,	two(0xF018, 0xD800), two(0xF1F8, 0xFF8F), "Ii+sDk", mfloat },
-{"fmovem", 4,	two(0xF000, 0xD000), two(0xF1C0, 0xFF00), "Id&s#3", mfloat },
-{"fmovem", 4,	two(0xF000, 0xD800), two(0xF1C0, 0xFF8F), "Ii&sDk", mfloat },
+{"fmovem", 4,	two(0xF020, 0xE000), two(0xF1F8, 0xFF00), "IdL3-s", mfloat }, /* fmovem <list>,-(An) */
+{"fmovem", 4,	two(0xF000, 0xF000), two(0xF1C0, 0xFF00), "Idl3&s", mfloat }, /* fmovem <list>,<ea> */
+{"fmovem", 4,	two(0xF018, 0xD000), two(0xF1F8, 0xFF00), "Id+sl3", mfloat }, /* fmovem (An)+,<list> */
+{"fmovem", 4,	two(0xF000, 0xD000), two(0xF1C0, 0xFF00), "Id!sl3", mfloat }, /* fmovem <ea>,<list> */
+{"fmovem", 4,	two(0xF020, 0xE000), two(0xF1F8, 0xFF00), "Id#3-s", mfloat }, /* fmovem #regs,-(An) */
+{"fmovem", 4,	two(0xF020, 0xE800), two(0xF1F8, 0xFF8F), "IiDk-s", mfloat }, /* fmovem Dn,-(An) */
+{"fmovem", 4,	two(0xF000, 0xF000), two(0xF1C0, 0xFF00), "Id#3&s", mfloat }, /* fmovem #regs,<ea> */
+{"fmovem", 4,	two(0xF000, 0xF800), two(0xF1C0, 0xFF8F), "IiDk&s", mfloat }, /* fmovem Dn,<ea> */
+{"fmovem", 4,	two(0xF018, 0xD000), two(0xF1F8, 0xFF00), "Id+s#3", mfloat }, /* fmovem (An)+,#regs */
+{"fmovem", 4,	two(0xF018, 0xD800), two(0xF1F8, 0xFF8F), "Ii+sDk", mfloat }, /* fmovem (An)+,Dn */
+{"fmovem", 4,	two(0xF000, 0xD000), two(0xF1C0, 0xFF00), "Id!s#3", mfloat }, /* fmovem <ea>,#regs */
+{"fmovem", 4,	two(0xF000, 0xD800), two(0xF1C0, 0xFF8F), "Ii!sDk", mfloat }, /* fmovem <ea>,Dn */
 {"fmovem", 4,	two(0xF000, 0xA000), two(0xF1C0, 0xE3FF), "Iis8%s", mfloat },
 {"fmovem", 4,	two(0xF000, 0x8000), two(0xF1C0, 0xE3FF), "Ii*ss8", mfloat },
 {"fmovem", 4,	two(0xF000, 0xA000), two(0xF1C0, 0xE3FF), "IiL8~s", mfloat },
