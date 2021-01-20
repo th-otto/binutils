@@ -4471,6 +4471,8 @@ md_assemble (char *str)
 	  fixP->fx_pcrel_adjust = the_ins.reloc[m].pcrel_fix;
 	  if (the_ins.reloc[m].wid == 'B')
 	    fixP->fx_signed = 1;
+	  if (the_ins.reloc[m].pcrel)
+	    fixP->fx_signed = 1;
 	}
       return;
     }
