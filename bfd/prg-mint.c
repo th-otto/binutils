@@ -424,8 +424,11 @@ MY (object_p) (bfd *abfd)
 static bool
 MY (bfd_free_cached_info) (bfd *abfd)
 {
-  struct mint_internal_info *myinfo = obj_aout_ext (abfd);
+  struct mint_internal_info *myinfo;
 
+  if (abfd->format == bfd_unknown)
+    return true;
+  myinfo = obj_aout_ext (abfd);
   if (myinfo != NULL && myinfo->relocs != NULL)
     {
       free (myinfo->relocs);
