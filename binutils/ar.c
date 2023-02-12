@@ -709,6 +709,8 @@ ranlib_main (int argc, char **argv)
   xexit (status);
 }
 
+#include "libcmain.h"
+
 int main (int, char **);
 
 int

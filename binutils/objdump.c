@@ -5957,6 +5957,8 @@ display_file (char *filename, char *target)
   bfd_close (file);
 }
 
+#include "libcmain.h"
+
 int
 main (int argc, char **argv)
 {

@@ -179,6 +179,7 @@ Usage: %s [-[abcDhilLrsTvwxyz]] [-[ABCeEfFJnNOpPqQRStZ][name]] [-I dirs]\n\
   done (status);
 }
 
+#include "libcmain.h"
 
 int
 main (int argc, char **argv)

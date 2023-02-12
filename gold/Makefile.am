@@ -187,7 +187,7 @@ libgold_a_LIBADD = $(LIBOBJS)
 sources_var = main.cc
 deps_var = $(TARGETOBJS) libgold.a $(LIBIBERTY) $(LIBINTL_DEP)
 ldadd_var = $(TARGETOBJS) libgold.a $(LIBIBERTY) $(GOLD_LDADD) $(LIBINTL) \
-	 $(THREADLIBS) $(LIBDL) $(ZLIB) $(ZSTD_LIBS) $(JANSSON_LIBS)
+	 $(THREADLIBS) $(LIBDL) $(ZLIB) $(ZSTD_LIBS) $(JANSSON_LIBS) $(GLIBC_SO)
 ldflags_var = $(GOLD_LDFLAGS)
 
 ld_new_SOURCES = $(sources_var)
@@ -201,12 +201,12 @@ incremental_dump_SOURCES = incremental-dump.cc
 incremental_dump_DEPENDENCIES = $(TARGETOBJS) libgold.a $(LIBIBERTY) \
 	$(LIBINTL_DEP)
 incremental_dump_LDADD = $(TARGETOBJS) libgold.a $(LIBIBERTY) $(LIBINTL) \
-	 $(THREADLIBS) $(LIBDL) $(ZLIB) $(ZSTD_LIBS) $(JANSSON_LIBS)
+	 $(THREADLIBS) $(LIBDL) $(ZLIB) $(ZSTD_LIBS) $(JANSSON_LIBS) $(GLIBC_SO)
 
 dwp_SOURCES = dwp.cc
 dwp_DEPENDENCIES = libgold.a $(LIBIBERTY) $(LIBINTL_DEP)
 dwp_LDADD = libgold.a $(LIBIBERTY) $(GOLD_LDADD) $(LIBINTL) $(THREADLIBS) \
-	$(LIBDL) $(ZLIB) $(ZSTD_LIBS) $(JANSSON_LIBS)
+	$(LIBDL) $(ZLIB) $(ZSTD_LIBS) $(JANSSON_LIBS) $(GLIBC_SO)
 dwp_LDFLAGS = $(GOLD_LDFLAGS)
 
 CONFIG_STATUS_DEPENDENCIES = $(srcdir)/../bfd/development.sh

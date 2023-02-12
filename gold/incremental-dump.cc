@@ -451,6 +451,8 @@ dump_incremental_inputs(const char* argv0, const char* filename,
 
 }
 
+#include "libcmain.h"
+
 int
 main(int argc, char** argv)
 {

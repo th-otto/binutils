@@ -1379,6 +1379,8 @@ gas_init (void)
   expr_section = subseg_new ("*GAS `expr' section*", 0);
 }
 
+#include "libcmain.h"
+
 int
 main (int argc, char ** argv)
 {

@@ -269,6 +269,8 @@ display_external_script (void)
   free (buf);
 }
 
+#include "libcmain.h"
+
 int
 main (int argc, char **argv)
 {

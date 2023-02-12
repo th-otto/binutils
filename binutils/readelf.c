@@ -24273,6 +24273,8 @@ db_task_printsym (unsigned int addr)
 }
 #endif
 
+#include "libcmain.h"
+
 int
 main (int argc, char ** argv)
 {
