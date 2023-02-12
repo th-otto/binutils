@@ -1267,6 +1267,8 @@ free_notes (void)
   _obstack_free (&notes, NULL);
 }
 
+#include "libcmain.h"
+
 int
 main (int argc, char ** argv)
 {

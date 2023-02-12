@@ -169,6 +169,8 @@ static bool strings_file (char *);
 static void print_strings (const char *, FILE *, file_ptr, int, char *);
 static void usage (FILE *, int) ATTRIBUTE_NORETURN;
 
+#include "libcmain.h"
+
 int main (int, char **);
 
 int

@@ -2344,6 +2344,8 @@ This program has absolutely no warranty.\n"));
 
 // Main program.
 
+#include "libcmain.h"
+
 int
 main(int argc, char** argv)
 {

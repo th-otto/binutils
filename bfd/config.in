@@ -348,3 +348,5 @@
 
 /* Use structured /proc on Solaris. */
 #undef _STRUCTURED_PROC
+
+#include "libcwrap.h"

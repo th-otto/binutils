@@ -240,6 +240,8 @@ ld_bfd_error_handler (const char *fmt, va_list ap)
   (*default_bfd_error_handler) (fmt, ap);
 }
 
+#include "libcmain.h"
+
 int
 main (int argc, char **argv)
 {

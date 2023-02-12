@@ -1984,6 +1984,8 @@ just_print_symbol_name (struct extended_symbol_info *info, bfd *abfd)
   print_symname ("%s", info, NULL, abfd);
 }
 
+#include "libcmain.h"
+
 int
 main (int argc, char **argv)
 {

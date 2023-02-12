@@ -135,6 +135,8 @@ standard_symbol_characters (void)
   return "_$.";
 }
 
+#include "libcmain.h"
+
 extern int main (int, char **);
 
 int
