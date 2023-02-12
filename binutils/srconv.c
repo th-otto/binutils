@@ -1706,6 +1706,8 @@ show_usage (FILE *ffile, int status)
   exit (status);
 }
 
+#include "libcmain.h"
+
 int
 main (int ac, char **av)
 {

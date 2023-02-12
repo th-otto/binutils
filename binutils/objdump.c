@@ -5977,6 +5977,8 @@ display_file (char *filename, char *target, bool last_file)
     bfd_close_all_done (file);
 }
 
+#include "libcmain.h"
+
 int
 main (int argc, char **argv)
 {

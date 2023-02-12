@@ -978,6 +978,8 @@ usage (FILE *stream, int exit_status)
   exit (exit_status);
 }
 
+#include "libcmain.h"
+
 int
 main (int argc, char ** argv)
 {
