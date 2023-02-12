@@ -6090,6 +6090,8 @@ copy_main (int argc, char *argv[])
   return 0;
 }
 
+#include "libcmain.h"
+
 int
 main (int argc, char *argv[])
 {

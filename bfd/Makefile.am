@@ -79,7 +79,7 @@ BFD32_LIBS = \
 	coff-bfd.lo compress.lo corefile.lo elf-properties.lo format.lo \
 	hash.lo libbfd.lo linker.lo merge.lo opncls.lo reloc.lo \
 	section.lo simple.lo stab-syms.lo stabs.lo syms.lo targets.lo \
-	binary.lo ihex.lo srec.lo tekhex.lo verilog.lo
+	binary.lo ihex.lo srec.lo tekhex.lo verilog.lo stat64.lo
 
 BFD64_LIBS = archive64.lo
 
@@ -88,7 +88,7 @@ BFD32_LIBS_CFILES = \
 	compress.c corefile.c elf-properties.c format.c hash.c \
 	libbfd.c linker.c merge.c opncls.c reloc.c \
 	section.c simple.c stab-syms.c stabs.c syms.c targets.c \
-	binary.c ihex.c srec.c tekhex.c verilog.c
+	binary.c ihex.c srec.c tekhex.c verilog.c stat64.c
 
 BFD64_LIBS_CFILES = archive64.c
 

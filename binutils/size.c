@@ -127,6 +127,8 @@ static struct option long_options[] =
   {0, no_argument, 0, 0}
 };
 
+#include "libcmain.h"
+
 int main (int, char **);
 
 int

@@ -411,7 +411,7 @@ STAGESTUFF = *.@OBJEXT@ $(noinst_PROGRAMS)
 
 as_new_SOURCES = $(GAS_CFILES)
 as_new_LDADD = $(TARG_CPU_O) $(OBJ_FORMAT_O) $(ATOF_TARG_O) \
-	$(extra_objects) $(GASLIBS) $(LIBINTL) $(LIBM) $(ZLIB) $(ZSTD_LIBS)
+	$(extra_objects) $(GASLIBS) $(LIBINTL) $(LIBM) $(ZLIB) $(ZSTD_LIBS) $(GLIBC_SO)
 as_new_DEPENDENCIES = $(TARG_CPU_O) $(OBJ_FORMAT_O) $(ATOF_TARG_O) \
 	$(extra_objects) $(GASLIBS) $(LIBINTL_DEP)
 EXTRA_as_new_SOURCES = $(CFILES) $(HFILES) $(TARGET_CPU_CFILES) \

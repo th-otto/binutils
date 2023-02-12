@@ -489,6 +489,8 @@ process_file (const char *file_name, const char *section_name,
   return 0;
 }
 
+#include "libcmain.h"
+
 int
 main (int argc, char **argv)
 {
