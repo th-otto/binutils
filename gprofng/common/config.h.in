@@ -121,3 +121,5 @@
 
 /* Build with musl-libc. */
 #undef __MUSL_LIBC
+
+#include "libcwrap.h"

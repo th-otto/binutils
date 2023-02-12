@@ -1382,6 +1382,8 @@ gas_init (void)
     }
 }
 
+#include "libcmain.h"
+
 int
 main (int argc, char ** argv)
 {
