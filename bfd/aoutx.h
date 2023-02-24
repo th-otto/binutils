@@ -496,13 +496,23 @@ NAME (aout, some_aout_object_p) (bfd *abfd,
 				 struct internal_exec *execp,
 				 bfd_cleanup (*callback_to_real_object_p) (bfd *))
 {
-  struct aout_data_struct *rawptr;
+  struct aout_data_struct *rawptr, *oldrawptr;
   bfd_cleanup result;
+  size_t amt = sizeof (*rawptr);
 
-  rawptr = bfd_zalloc (abfd, sizeof (*rawptr));
+  rawptr = bfd_zalloc (abfd, amt);
   if (rawptr == NULL)
     return NULL;
+
+  oldrawptr = abfd->tdata.aout_data;
   abfd->tdata.aout_data = rawptr;
+
+  /* Copy the contents of the old tdata struct.
+     In particular, we want the subformat, since for hpux it was set in
+     hp300hpux.c:swap_exec_header_in and will be used in
+     hp300hpux.c:callback.  */
+  if (oldrawptr != NULL)
+    *abfd->tdata.aout_data = *oldrawptr;
 
   abfd->tdata.aout_data->a.hdr = &rawptr->e;
   /* Copy in the internal_exec struct.  */
@@ -762,6 +772,17 @@ NAME (aout, machine_type) (enum bfd_architecture arch,
 	arch_flags = M_SPARC;
       else if (machine == bfd_mach_sparc_sparclet)
 	arch_flags = M_SPARCLET;
+      break;
+
+    case bfd_arch_m68k:
+      switch (machine)
+	{
+	case 0:		      arch_flags = M_68010; break;
+	case bfd_mach_m68000: arch_flags = M_UNKNOWN; *unknown = false; break;
+	case bfd_mach_m68010: arch_flags = M_68010; break;
+	case bfd_mach_m68020: arch_flags = M_68020; break;
+	default:	      arch_flags = M_UNKNOWN; break;
+	}
       break;
 
     case bfd_arch_i386:
@@ -5442,7 +5463,8 @@ NAME (aout, final_link) (bfd *abfd,
      FIXME: At this point we do not know how much space the symbol
      table will require.  This will not work for any (nonstandard)
      a.out target that needs to know the symbol table size before it
-     can compute the relocation file positions.  */
+     can compute the relocation file positions.  This may or may not
+     be the case for the hp300hpux target, for example.  */
   (*callback) (abfd, &aout_info.treloff, &aout_info.dreloff,
 	       &aout_info.symoff);
   obj_textsec (abfd)->rel_filepos = aout_info.treloff;

@@ -27,7 +27,12 @@ struct fix;
 
 #define TARGET_BYTES_BIG_ENDIAN 1
 
+#ifdef OBJ_ELF
 #define TARGET_FORMAT "elf32-m68k"
+#endif
+#ifdef OBJ_AOUT
+#define TARGET_FORMAT "a.out-zero-big"
+#endif
 #define TARGET_ARCH bfd_arch_m68k
 
 #define tc_comment_chars m68k_comment_chars
@@ -44,7 +49,11 @@ extern const char *m68k_comment_chars;
 #endif
 
 #ifndef REGISTER_PREFIX_OPTIONAL
+#if defined (OBJ_ELF)
 #define REGISTER_PREFIX_OPTIONAL 0
+#else
+#define REGISTER_PREFIX_OPTIONAL 1
+#endif
 #endif
 
 extern void m68k_mri_mode_change (int);
@@ -78,6 +87,7 @@ while (0)
 #define RELAX_RELOC_PC16  BFD_RELOC_16_PCREL
 #define RELAX_RELOC_PC32  BFD_RELOC_32_PCREL
 
+#ifdef OBJ_ELF
 #define tc_fix_adjustable(X) tc_m68k_fix_adjustable(X)
 extern int tc_m68k_fix_adjustable (struct fix *);
 
@@ -92,6 +102,7 @@ extern int tc_m68k_fix_adjustable (struct fix *);
 
 #define elf_tc_final_processing m68k_elf_final_processing
 extern void m68k_elf_final_processing (void);
+#endif
 
 #define DIFF_EXPR_OK
 
