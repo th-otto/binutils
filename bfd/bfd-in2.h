@@ -2234,6 +2234,7 @@ struct bfd
       struct tekhex_data_struct *tekhex_data;
       struct elf_obj_tdata *elf_obj_data;
       struct mmo_data_struct *mmo_data;
+      struct sun_core_struct *sun_core_data;
       struct trad_core_struct *trad_core_data;
       struct som_data_struct *som_data;
       struct hpux_core_struct *hpux_core_data;
