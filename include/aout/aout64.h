@@ -212,9 +212,7 @@ struct external_exec
    up to a N_SEGSIZE boundary for pure or pageable files.  */
 #ifndef N_DATADDR
 #define N_DATADDR(x) \
-  (N_MAGIC (x) == IMAGIC						\
-   ? (bfd_vma) 0							\
-   : N_MAGIC (x) == OMAGIC						\
+  (N_MAGIC (x) == OMAGIC						\
    ? (N_TXTADDR (x) + N_TXTSIZE (x))					\
    : (N_SEGSIZE (x) + ((N_TXTADDR (x) + N_TXTSIZE (x) - 1)		\
 		       & ~ (bfd_vma) (N_SEGSIZE (x) - 1))))
