@@ -1236,6 +1236,13 @@ bfd_slurp_armap (bfd *abfd)
   return true;
 }
 
+/* Returns FALSE on error, TRUE otherwise.  */
+/* Flavor 2 of a bsd armap, similar to bfd_slurp_bsd_armap except the
+   header is in a slightly different order and the map name is '/'.
+   This flavour is used by hp300hpux.  */
+
+#define HPUX_SYMDEF_COUNT_SIZE 2
+
 /** Extended name table.
 
   Normally archives support only 14-character filenames.
