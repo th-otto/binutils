@@ -1372,7 +1372,11 @@ warning_find_reloc (bfd *abfd, asection *sec, void *iarg)
 
   relsize = bfd_get_reloc_upper_bound (abfd, sec);
   if (relsize < 0)
-    einfo (_("%F%P: %pB: could not read relocs: %E\n"), abfd);
+  {
+    einfo (_("%P: %pB: could not read relocs: %E\n"), abfd);
+    einfo (_("%P: %pB: %s%s\n"), abfd, _("warning: "), info->warning);
+    return;
+  }
   if (relsize == 0)
     return;
 
