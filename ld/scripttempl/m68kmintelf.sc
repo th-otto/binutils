@@ -50,8 +50,8 @@ SECTIONS
     *(.rodata .rodata.* .gnu.linkonce.r.*) /* Only present in ELF objects */
     *(.eh_frame*)
     *(.gcc_except_table*)
-    ${RELOCATING+ *(.ctors)}
-    ${RELOCATING+ *(.dtors)}
+    ${RELOCATING+ *(.ctors SORT_BY_INIT_PRIORITY(.ctors.*))}
+    ${RELOCATING+ *(.dtors SORT_BY_INIT_PRIORITY(.dtors.*))}
     ${CONSTRUCTING+CONSTRUCTORS}
     ${RELOCATING+etext = .;}
     ${RELOCATING+_etext = .;}
