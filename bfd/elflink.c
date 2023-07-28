@@ -5602,7 +5602,6 @@ elf_link_add_object_symbols (bfd *abfd, struct bfd_link_info *info)
       free (nondeflt_vers);
       return true;
     }
-
   if (old_tab != NULL)
     {
       if (!(*bed->notice_as_needed) (abfd, info, notice_needed))
@@ -5610,6 +5609,52 @@ elf_link_add_object_symbols (bfd *abfd, struct bfd_link_info *info)
       free (old_tab);
       old_tab = NULL;
     }
+
+
+  /*
+   * We must call the constructor callback for all entries in .ctors/.dtors sections,
+   * so they are added to the __CTOR_LIST__/__DTOR_LIST__ vectors.
+   */
+  if (info->output_bfd->xvec->flavour == bfd_target_aout_flavour)
+  {
+    const char *name;
+
+    for (s = abfd->sections; s != NULL; s = s->next)
+    {
+        bool is_cons;
+        asymbol **symbols;
+        arelent *reloc;
+        unsigned int j;
+
+        name = bfd_section_name(s);
+        if (strncmp(name, ".ctors", 6) == 0)
+        {
+            is_cons = true;
+        } else if (strncmp(name, ".dtors", 6) == 0)
+        {
+            is_cons = false;
+        } else
+        {
+            continue;
+        }
+        if (s->reloc_count == 0)
+            continue;
+        symbols = (asymbol **)bfd_alloc(abfd, (symcount + 1) * sizeof(*symbols));
+        if (bed->s->slurp_symbol_table(abfd, symbols, dynamic) > 0)
+        {
+	        abfd->symcount = symcount;
+	        if (bed->s->slurp_reloc_table(abfd, s, symbols, dynamic))
+	        {
+		        reloc = s->relocation;
+		        for (j = 0; j < s->reloc_count; j++, reloc++)
+		        {
+		            /* fprintf(stderr, "%u: %s\n", j, (*reloc->sym_ptr_ptr)->name); */
+		            info->callbacks->constructor(info, is_cons, (*reloc->sym_ptr_ptr)->name, abfd, (*reloc->sym_ptr_ptr)->section, (*reloc->sym_ptr_ptr)->value);
+		        }
+		    }
+	    }
+    }
+  }
 
   /* Now that all the symbols from this input file are created, if
      not performing a relocatable link, handle .symver foo, foo@BAR
@@ -6117,6 +6162,7 @@ elf_link_add_archive_symbols (bfd *abfd, struct bfd_link_info *info)
 bool
 bfd_elf_link_add_symbols (bfd *abfd, struct bfd_link_info *info)
 {
+
   switch (bfd_get_format (abfd))
     {
     case bfd_object:
