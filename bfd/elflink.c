@@ -7485,7 +7485,7 @@ error: %s: is triggering the generation of an executable stack (because it has a
 warning: %s: requires executable stack (because the .note.GNU-stack section is executable)"),
 		       bfd_get_filename (noteobj));
 		    }
-		  else if (emptyobj)
+		  else if (emptyobj && (info->output_bfd == NULL || info->output_bfd->xvec == NULL || strcmp(info->output_bfd->xvec->name, "elf32-atariprg") != 0))
 		    {
 		      if (info->error_execstack)
 			{

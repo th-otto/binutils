@@ -43,6 +43,7 @@
 #include "libiberty.h"
 #include "safe-ctype.h"
 #include "filenames.h"
+#include "elf32-atariprg.h"
 
 char * program_name = "elfedit";
 static long archive_file_offset;
@@ -762,6 +763,18 @@ check_file (const char *file_name, struct stat *statbuf_p)
   return 0;
 }
 
+static bool
+atariprg_get_extra_header_info (FILE *file, size_t *sizeof_extra_headerp)
+{
+  unsigned char rest_of_header[sizeof(PRG_HEADER)];
+  
+  if (fread (&rest_of_header[SARMAG], sizeof(PRG_HEADER) - SARMAG, 1, file) != 1)
+    return false;
+  /* Size of extra header before ELF header in segment.  */
+  *sizeof_extra_headerp = rest_of_header[21];
+  return true;
+}
+
 static int
 process_file (const char *file_name)
 {
@@ -793,7 +806,22 @@ process_file (const char *file_name)
     ret = process_archive (file_name, file, true);
   else
     {
-      rewind (file);
+      if (armag[0] == 0x60 && armag[1] == 0x1a)
+	{
+	  /* This is a PRG/ELF executable with extra header.  */
+	  size_t sizeof_extra_header;
+	  
+	  if (atariprg_get_extra_header_info(file, &sizeof_extra_header) == false ||
+	    fseek(file, sizeof_extra_header, SEEK_SET) != 0)
+	  {
+	  	fclose(file);
+	    return 1;
+	  }
+	}
+      else
+	{
+	  rewind (file);
+	}
       archive_file_size = archive_file_offset = 0;
       ret = process_object (file_name, file);
 #ifdef HAVE_MMAP
@@ -867,6 +895,10 @@ elf_machine (const char *mach)
     return EM_X86_64;
   if (strcasecmp (mach, "x86-64") == 0)
     return EM_X86_64;
+  if (strcasecmp (mach, "m68k") == 0)
+    return EM_68K;
+  if (strcasecmp (mach, "coldfire") == 0)
+    return EM_COLDFIRE;
   if (strcasecmp (mach, "none") == 0)
     return EM_NONE;
 
@@ -945,9 +977,9 @@ usage (FILE *stream, int exit_status)
   fprintf (stream, _(" Update the ELF header of ELF files\n"));
   fprintf (stream, _(" The options are:\n"));
   fprintf (stream, _("\
-  --input-mach [none|i386|iamcu|l1om|k1om|x86_64]\n\
+  --input-mach [none|i386|iamcu|l1om|k1om|x86_64|m68k|coldfire]\n\
                               Set input machine type\n\
-  --output-mach [none|i386|iamcu|l1om|k1om|x86_64]\n\
+  --output-mach [none|i386|iamcu|l1om|k1om|x86_64|m68k|coldfire]\n\
                               Set output machine type\n\
   --input-type [none|rel|exec|dyn]\n\
                               Set input file type\n\

@@ -1,4 +1,4 @@
-/* Copyright (C) 2008-2017 Free Software Foundation, Inc.
+/* Copyright (C) 2023 Free Software Foundation, Inc.
 
    This file is part of GAS, the GNU Assembler.
 
@@ -17,7 +17,7 @@
    Software Foundation, 51 Franklin Street - Fifth Floor, Boston, MA
    02110-1301, USA.  */
 
-#define TE_MINT
+#define TE_MINTELF
 
 #define LOCAL_LABELS_DOLLAR 1
 #define LOCAL_LABELS_FB 1
