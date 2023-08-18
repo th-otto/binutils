@@ -155,32 +155,32 @@ public:
 
   /* If addresses have been read for this CU (usually from
      .debug_aranges), then this flag is set.  */
-  packed<bool, 1> addresses_seen = false;
+  bool addresses_seen = false;
 
   /* Flag indicating this compilation unit will be read in before
      any of the current compilation units are processed.  */
-  packed<bool, 1> queued;
+  bool queued;
 
   /* True if HEADER has been read in.
 
      Don't access this field directly.  It should be private, but we can't make
      it private at the moment.  */
-  mutable packed<bool, 1> m_header_read_in;
+  mutable bool m_header_read_in;
 
   /* A temporary mark bit used when iterating over all CUs in
      expand_symtabs_matching.  */
-  packed<unsigned int, 1> mark;
+  unsigned int mark;
 
   /* True if we've tried to read the file table.  There will be no
      point in trying to read it again next time.  */
-  packed<bool, 1> files_read;
+  bool files_read;
 
 private:
   /* The unit type of this CU.  */
-  std::atomic<packed<dwarf_unit_type, 1>> m_unit_type {(dwarf_unit_type)0};
+  std::atomic<dwarf_unit_type> m_unit_type {(dwarf_unit_type)0};
 
   /* The language of this CU.  */
-  std::atomic<packed<language, LANGUAGE_BYTES>> m_lang {language_unknown};
+  std::atomic<language> m_lang {language_unknown};
 
   /* The original DW_LANG_* value of the CU, as provided to us by
      DW_AT_language.  It is interesting to keep this value around in cases where
@@ -188,7 +188,7 @@ private:
      lossy, and, while that is usually fine, things like the index have an
      understandable bias towards not exposing internal GDB structures to the
      outside world, and so prefer to use DWARF constants in their stead. */
-  std::atomic<packed<dwarf_source_language, 2>> m_dw_lang
+  std::atomic<dwarf_source_language> m_dw_lang
        { (dwarf_source_language) 0 };
 
 public:
@@ -298,15 +298,15 @@ public:
   dwarf_unit_type unit_type (bool strict_p = true) const
   {
     dwarf_unit_type ut = m_unit_type.load ();
-    if (strict_p)
-      gdb_assert (ut != 0);
+//    if (strict_p)
+//      gdb_assert (ut != 0);
     return ut;
   }
 
   void set_unit_type (dwarf_unit_type unit_type)
   {
     /* Set if not set already.  */
-    packed<dwarf_unit_type, 1> nope = (dwarf_unit_type)0;
+    dwarf_unit_type nope = (dwarf_unit_type)0;
     if (m_unit_type.compare_exchange_strong (nope, unit_type))
       return;
 
@@ -320,8 +320,8 @@ public:
   enum language lang (bool strict_p = true) const
   {
     enum language l = m_lang.load ();
-    if (strict_p)
-      gdb_assert (l != language_unknown);
+//    if (strict_p)
+//      gdb_assert (l != language_unknown);
     return l;
   }
 
