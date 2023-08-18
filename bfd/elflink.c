@@ -7256,7 +7256,7 @@ warning: enabling an executable stack because of -z execstack command line optio
 		    _bfd_error_handler (_("\
 warning: %s: requires executable stack (because the .note.GNU-stack section is executable)"),
 		       bfd_get_filename (noteobj));
-		  else if (emptyobj)
+		  else if (emptyobj && (info->output_bfd == NULL || info->output_bfd->xvec == NULL || strcmp(info->output_bfd->xvec->name, "elf32-atariprg") != 0))
 		    {
 		      _bfd_error_handler (_("\
 warning: %s: missing .note.GNU-stack section implies executable stack"),

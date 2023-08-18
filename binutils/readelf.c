@@ -168,6 +168,7 @@
 #include "elf/xtensa.h"
 #include "elf/z80.h"
 #include "elf/loongarch.h"
+#include "elf32-atariprg.h"
 
 #include "getopt.h"
 #include "libiberty.h"
@@ -7164,6 +7165,7 @@ process_section_headers (Filedata * filedata)
 {
   Elf_Internal_Shdr * section;
   unsigned int i;
+  int name_column_width = 17;
 
   if (filedata->file_header.e_shnum == 0)
     {
@@ -7287,6 +7289,7 @@ process_section_headers (Filedata * filedata)
        i++, section++)
     {
       const char *name = section_name_print (filedata, section);
+      int len;
 
       /* Run some sanity checks on the headers and
 	 possibly fill in some file data as well.  */
@@ -7370,6 +7373,9 @@ process_section_headers (Filedata * filedata)
 	  break;
 	}
 
+      len = (int)strlen(name);
+      if (len > name_column_width)
+        name_column_width = len;
       if ((do_debugging || do_debug_info || do_debug_abbrevs
 	   || do_debug_lines || do_debug_pubnames || do_debug_pubtypes
 	   || do_debug_aranges || do_debug_frames || do_debug_macinfo
@@ -7461,8 +7467,10 @@ process_section_headers (Filedata * filedata)
 	  printf (_("       Type            Addr     Off    Size   ES   Lk Inf Al\n"));
 	}
       else
-	printf
-	  (_("  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al\n"));
+        {
+	  printf
+	    (_("  [Nr] %-*s Type            Addr     Off    Size   ES Flg Lk Inf Al\n"), name_column_width, _("Name"));
+	}
     }
   else if (do_wide)
     {
@@ -7473,7 +7481,7 @@ process_section_headers (Filedata * filedata)
 	}
       else
 	printf
-	  (_("  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al\n"));
+	  (_("  [Nr] %-*s Type            Address          Off    Size   ES Flg Lk Inf Al\n"), name_column_width, _("Name"));
     }
   else
     {
@@ -7485,8 +7493,8 @@ process_section_headers (Filedata * filedata)
 	}
       else
 	{
-	  printf (_("  [Nr] Name              Type             Address           Offset\n"));
-	  printf (_("       Size              EntSize          Flags  Link  Info  Align\n"));
+	  printf (_("  [Nr] %-*s Type             Address           Offset\n"), name_column_width, _("Name"));
+	  printf (_("       %-*s EntSize          Flags  Link  Info  Align\n"), name_column_width, _("Size"));
 	}
     }
 
@@ -7633,7 +7641,7 @@ process_section_headers (Filedata * filedata)
       if (do_section_details)
 	printf ("%s\n      ", printable_section_name (filedata, section));
       else
-	print_symbol (-17, section_name_print (filedata, section));
+	print_symbol (-name_column_width, section_name_print (filedata, section));
 
       printf (do_wide ? " %-15s " : " %-15.15s ",
 	      get_section_type_name (filedata, section->sh_type));
@@ -9092,7 +9100,7 @@ ia64_process_unwind (Filedata * filedata)
 	    printf ("'%s'", printable_section_name (filedata, unwsec));
 
 	  printf (_(" at offset %#" PRIx64 " contains %" PRIu64 " entries:\n"),
-		  unwsec->sh_offset,
+		  (uint64_t) unwsec->sh_offset,
 		  unwsec->sh_size / (3 * eh_addr_size));
 
 	  if (slurp_ia64_unwind_table (filedata, & aux, unwsec)
@@ -9467,7 +9475,7 @@ hppa_process_unwind (Filedata * filedata)
 			    "contains %" PRIu64 " entries:\n",
 			    num_unwind),
 		  printable_section_name (filedata, sec),
-		  sec->sh_offset,
+		  (uint64_t) sec->sh_offset,
 		  num_unwind);
 
           if (! slurp_hppa_unwind_table (filedata, &aux, sec))
@@ -10575,7 +10583,7 @@ arm_process_unwind (Filedata * filedata)
 			      "contains %" PRIu64 " entries:\n",
 			      num_unwind),
 		    printable_section_name (filedata, sec),
-		    sec->sh_offset,
+		    (uint64_t) sec->sh_offset,
 		    num_unwind);
 
 	    if (! dump_arm_unwind (filedata, &aux, sec))
@@ -12163,7 +12171,7 @@ process_version_sections (Filedata * filedata)
 
 	    printf (_(" Addr: 0x%016" PRIx64), section->sh_addr);
 	    printf (_("  Offset: 0x%08" PRIx64 "  Link: %u (%s)\n"),
-		    section->sh_offset, section->sh_link,
+		    (uint64_t) section->sh_offset, section->sh_link,
 		    printable_section_name_from_index (filedata, section->sh_link));
 
 	    edefs = (Elf_External_Verdef *)
@@ -12309,7 +12317,7 @@ process_version_sections (Filedata * filedata)
 
 	    printf (_(" Addr: 0x%016" PRIx64), section->sh_addr);
 	    printf (_("  Offset: 0x%08" PRIx64 "  Link: %u (%s)\n"),
-		    section->sh_offset, section->sh_link,
+		    (uint64_t) section->sh_offset, section->sh_link,
 		    printable_section_name_from_index (filedata, section->sh_link));
 
 	    eneed = (Elf_External_Verneed *) get_data (NULL, filedata,
@@ -12474,7 +12482,7 @@ process_version_sections (Filedata * filedata)
 
 	    printf (_(" Addr: 0x%016" PRIx64), section->sh_addr);
 	    printf (_("  Offset: 0x%08" PRIx64 "  Link: %u (%s)\n"),
-		    section->sh_offset, section->sh_link,
+		    (uint64_t) section->sh_offset, section->sh_link,
 		    printable_section_name (filedata, link_section));
 
 	    off = offset_from_vma (filedata,
@@ -22364,11 +22372,38 @@ process_arch_specific (Filedata * filedata)
 }
 
 static bool
+atariprg_get_extra_header_info (Filedata * filedata, size_t *sizeof_extra_headerp)
+{
+  unsigned char rest_of_header[sizeof(PRG_HEADER)];
+  
+  if (fread (&rest_of_header[EI_NIDENT], sizeof(PRG_HEADER) - EI_NIDENT, 1, filedata->handle) != 1)
+    return false;
+  /* Size of extra header before ELF header in segment.  */
+  *sizeof_extra_headerp = rest_of_header[21];
+  return true;
+}
+
+static bool
 get_file_header (Filedata * filedata)
 {
   /* Read in the identity array.  */
   if (fread (filedata->file_header.e_ident, EI_NIDENT, 1, filedata->handle) != 1)
     return false;
+
+  if (filedata->file_header.e_ident[0] == 0x60
+      && filedata->file_header.e_ident[1] == 0x1a)
+    {
+      /* This is a PRG/ELF executable with extra header.  */
+	  size_t sizeof_extra_header;
+	  
+	  if (atariprg_get_extra_header_info(filedata, &sizeof_extra_header) == false ||
+        fseek(filedata->handle, sizeof_extra_header, SEEK_SET) != 0)
+	return false;
+
+      /* Read in the identity array again.  */
+      if (fread (filedata->file_header.e_ident, EI_NIDENT, 1, filedata->handle) != 1)
+	return false;
+    }
 
   /* Determine how to read the rest of the header.  */
   switch (filedata->file_header.e_ident[EI_DATA])
