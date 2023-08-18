@@ -53,5 +53,6 @@ GDB_OSABI_DEF (LYNXOS178, "LynxOS178", nullptr)
 GDB_OSABI_DEF (NEWLIB, "Newlib", nullptr)
 GDB_OSABI_DEF (SDE, "SDE", nullptr)
 GDB_OSABI_DEF (PIKEOS, "PikeOS", nullptr)
+GDB_OSABI_DEF (MINT, "MiNT", nullptr)
 
 GDB_OSABI_DEF_LAST (INVALID, "<invalid>", nullptr)

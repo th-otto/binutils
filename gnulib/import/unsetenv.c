@@ -25,6 +25,7 @@
 
 #include <errno.h>
 #if !_LIBC
+# undef __set_errno
 # define __set_errno(ev) ((errno) = (ev))
 #endif
 

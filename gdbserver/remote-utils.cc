@@ -128,7 +128,7 @@ remote_connection_is_stdio (void)
 static void
 enable_async_notification (int fd)
 {
-#if defined(F_SETFL) && defined (FASYNC)
+#if defined(F_SETFL) && defined (FASYNC) && !defined(__MINT__)
   int save_fcntl_flags;
 
   save_fcntl_flags = fcntl (fd, F_GETFL, 0);
@@ -293,9 +293,11 @@ remote_prepare (const char *name)
     case AF_INET:
       ((struct sockaddr_in *) iter->ai_addr)->sin_addr.s_addr = INADDR_ANY;
       break;
+#ifndef __MINT__
     case AF_INET6:
       ((struct sockaddr_in6 *) iter->ai_addr)->sin6_addr = in6addr_any;
       break;
+#endif
     default:
       internal_error (_("Invalid 'ai_family' %d\n"), iter->ai_family);
     }

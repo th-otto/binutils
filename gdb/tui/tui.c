@@ -359,6 +359,13 @@ tui_ensure_readline_initialized ()
 
   /* Initialize readline after the above.  */
   rl_initialize ();
+#ifdef __MINT__
+  {
+  const char *value = rl_variable_value("enable-bracketed-paste");
+  if (value != NULL && strcmp(value, "on") == 0)
+    rl_variable_bind("enable-bracketed-paste", NULL);
+  }
+#endif
 }
 
 /* Return the TERM variable from the environment, or "<unset>"

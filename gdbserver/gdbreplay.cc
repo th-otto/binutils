@@ -194,9 +194,11 @@ remote_open (const char *name)
     case AF_INET:
       ((struct sockaddr_in *) p->ai_addr)->sin_addr.s_addr = INADDR_ANY;
       break;
+#ifndef __MINT__
     case AF_INET6:
       ((struct sockaddr_in6 *) p->ai_addr)->sin6_addr = in6addr_any;
       break;
+#endif
     default:
       fprintf (stderr, "Invalid 'ai_family' %d\n", p->ai_family);
       exit (1);
@@ -254,7 +256,7 @@ remote_open (const char *name)
 #endif
     }
 
-#if defined(F_SETFL) && defined (FASYNC)
+#if defined(F_SETFL) && defined (FASYNC) && !defined(__MINT__)
   fcntl (remote_desc_in, F_SETFL, FASYNC);
 #endif
   remote_desc_out = remote_desc_in;

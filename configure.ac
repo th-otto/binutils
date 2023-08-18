@@ -461,6 +461,14 @@ case "${host}" in
     noconfigdirs="$noconfigdirs tcl tk itcl"
     ;;
 esac
+case "${target}" in
+  m68k-*-mintelf*)
+    noconfigdirs="$noconfigdirs sim"
+    ;;
+  m68k-*-mint*)
+    noconfigdirs="$noconfigdirs gdb gdbserver libdecnumber sim"
+    ;;
+esac
 
 # Default to --disable-year2038 until we can handle differences between
 # projects that use gnulib (which understands year 2038) and projects that
@@ -1206,9 +1214,6 @@ case "${target}" in
     ;;
   kvx-*-*)
     noconfigdirs="$noconfigdirs gdb gdbserver sim"
-    ;;
-  m68k-*-mint*)
-    noconfigdirs="$noconfigdirs gdb libdecnumber sim"
     ;;
   mmix-*-*)
     noconfigdirs="$noconfigdirs gdb"
