@@ -66,6 +66,10 @@ case "${$2}" in
     sh*-*-netbsd*)
 	$1=-fpic
 	;;
+    m68k-*-mint*)
+	# PIC is not supported
+	PICFLAG=
+	;;
     # Default to -fPIC unless specified otherwise.
     *)
 	$1=-fPIC

@@ -5379,6 +5379,10 @@ case "${host}" in
     sh*-*-netbsd*)
 	PICFLAG=-fpic
 	;;
+    m68k-*-mint*)
+	# PIC is not supported
+	PICFLAG=
+	;;
     # Default to -fPIC unless specified otherwise.
     *)
 	PICFLAG=-fPIC

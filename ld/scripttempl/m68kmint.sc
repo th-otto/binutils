@@ -24,24 +24,36 @@ SECTIONS
     CREATE_OBJECT_SYMBOLS
     *(.text)
     ${CONSTRUCTING+CONSTRUCTORS}
+    ${RELOCATING+etext = .;}
     ${RELOCATING+_etext = .;}
-    ${RELOCATING+__etext = .;}
+    ${RELOCATING+${USER_LABEL_PREFIX}_etext = .;}
   }
 
   .data :
   {
     *(.data)
     ${RELOCATING+_edata = .;}
-    ${RELOCATING+__edata = .;}
+    ${RELOCATING+${USER_LABEL_PREFIX}_edata = .;}
   }
 
   .bss :
   {
-    ${RELOCATING+__bss_start = .;}
+    ${RELOCATING+${USER_LABEL_PREFIX}_bss_start = .;}
     *(.bss)
     *(COMMON)
     ${RELOCATING+_end = .;}
-    ${RELOCATING+__end = .;}
+    ${RELOCATING+${USER_LABEL_PREFIX}_end = .;}
+  }
+
+  /* Discard the following ELF sections.
+   * Some of them may be present in ELF libgcc.a.
+   */
+  /DISCARD/ :
+  {
+      *(.comment)
+      *(.debug*)
+      *(.note*)
+      *(.gnu.attributes)
   }
 }
 EOF

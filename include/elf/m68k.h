@@ -80,6 +80,9 @@ END_RELOC_NUMBERS (R_68K_max)
 #define EF_M68K_ARCH_MASK						\
   (EF_M68K_M68000 | EF_M68K_CPU32 | EF_M68K_CFV4E | EF_M68K_FIDO)
 
+#define EF_M68K_SHORTINT  0x00004000
+#define EF_M68K_FASTCALL  0x00002000
+
 /* We use the bottom 8 bits to encode information about the
    coldfire variant.  If we use any of these bits, the top 24 bits are
    either 0 or EF_M68K_CFV4E.  */
@@ -108,6 +111,7 @@ enum
      2 for soft-float,
      0 for not tagged or not using any ABIs affected by the differences. */
   Tag_GNU_M68K_ABI_FP = 4,
+  Tag_GNU_M68K_ABI = 8,
 };
 
 #endif
