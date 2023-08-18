@@ -32,15 +32,31 @@ enum test_enum
   TE_D = 4,
 };
 
+struct array_1 { char a[1]; };
+struct array_3 { char a[3]; };
+#ifdef __MINT__
+gdb_static_assert (sizeof (packed<test_enum, 1>) == sizeof(struct array_1));
+gdb_static_assert (sizeof (packed<test_enum, 3>) == sizeof(struct array_3));
+#else
+/* fails with compilers using STRUCTURE_SIZE_BOUNDARY */
 gdb_static_assert (sizeof (packed<test_enum, 1>) == 1);
-gdb_static_assert (sizeof (packed<test_enum, 2>) == 2);
 gdb_static_assert (sizeof (packed<test_enum, 3>) == 3);
+#endif
+gdb_static_assert (sizeof (packed<test_enum, 2>) == 2);
 gdb_static_assert (sizeof (packed<test_enum, 4>) == 4);
 
+#ifdef __MINT__
+gdb_static_assert (alignof (packed<test_enum, 1>) == alignof(struct array_1));
+gdb_static_assert (alignof (packed<test_enum, 2>) == alignof(struct array_1));
+gdb_static_assert (alignof (packed<test_enum, 3>) == alignof(struct array_3));
+gdb_static_assert (alignof (packed<test_enum, 4>) == alignof(struct array_3));
+#else
+/* fails with compilers using STRUCTURE_SIZE_BOUNDARY */
 gdb_static_assert (alignof (packed<test_enum, 1>) == 1);
 gdb_static_assert (alignof (packed<test_enum, 2>) == 1);
 gdb_static_assert (alignof (packed<test_enum, 3>) == 1);
 gdb_static_assert (alignof (packed<test_enum, 4>) == 1);
+#endif
 
 /* Triviality checks.  */
 #define CHECK_TRAIT(TRAIT)			\

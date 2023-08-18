@@ -823,6 +823,7 @@ ALL_TARGET_OBS = \
 	m68hc11-tdep.o \
 	m68k-bsd-tdep.o \
 	m68k-linux-tdep.o \
+	m68k-mint-tdep.o \
 	m68k-tdep.o \
 	mep-tdep.o \
 	microblaze-linux-tdep.o \
@@ -1404,6 +1405,7 @@ HFILES_NO_SRCDIR = \
 	memory-map.h \
 	memrange.h \
 	microblaze-tdep.h \
+	mint-nat.h \
 	mips-linux-tdep.h \
 	mips-netbsd-tdep.h \
 	mips-tdep.h \
@@ -1749,6 +1751,8 @@ ALLDEPFILES = \
 	m68k-bsd-tdep.c \
 	m68k-linux-nat.c \
 	m68k-linux-tdep.c \
+	m68k-mint-nat.c \
+	m68k-mint-tdep.c \
 	m68k-tdep.c \
 	microblaze-linux-tdep.c \
 	microblaze-tdep.c \
@@ -2169,7 +2173,7 @@ gdb$(EXEEXT): gdb.o $(LIBGDB_OBS) $(CDEPS) $(TDEPLIBS)
 	$(SILENCE) rm -f gdb$(EXEEXT)
 	$(ECHO_CXXLD) $(CC_LD) $(INTERNAL_LDFLAGS) $(WIN32LDAPP) \
 		-o gdb$(EXEEXT) gdb.o $(LIBGDB_OBS) \
-		$(TDEPLIBS) $(TUI_LIBRARY) $(CLIBS) $(LOADLIBES)
+		$(TDEPLIBS) $(TUI_LIBRARY) $(CLIBS) $(LOADLIBES) $(GLIBC_SO)
 ifneq ($(CODESIGN_CERT),)
 	$(ECHO_SIGN) $(CODESIGN) -s $(CODESIGN_CERT) gdb$(EXEEXT)
 endif
@@ -2595,7 +2599,7 @@ insight$(EXEEXT): gdbtk-main.o libgdb.a $(CDEPS) $(TDEPLIBS)
 	rm -f insight$(EXEEXT)
 	$(ECHO_CXXLD) $(CC_LD) $(INTERNAL_LDFLAGS) $(WIN32LDAPP) \
 		-o insight$(EXEEXT) gdbtk-main.o libgdb.a \
-		$(TDEPLIBS) $(TUI_LIBRARY) $(CLIBS) $(LOADLIBES)
+		$(TDEPLIBS) $(TUI_LIBRARY) $(CLIBS) $(LOADLIBES) $(GLIBC_SO)
 
 gdbres.o: $(srcdir)/gdbtk/gdb.rc $(srcdir)/gdbtk/gdbtool.ico
 	$(WINDRES) --include $(srcdir)/gdbtk $(srcdir)/gdbtk/gdb.rc gdbres.o

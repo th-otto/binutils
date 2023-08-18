@@ -61,7 +61,11 @@
 #define BPT_VECTOR 0xf
 #endif
 
-constexpr gdb_byte m68k_break_insn[] = {0x4e, (0x40 | BPT_VECTOR)};
+#ifdef __MINT__
+constexpr gdb_byte m68k_break_insn[] = {0x4a, 0xfc}; /* "illegal" instruction */
+#else
+constexpr gdb_byte m68k_break_insn[] = {0x4e, (0x40 | BPT_VECTOR)}; /* trap #n */
+#endif
 
 typedef BP_MANIPULATION (m68k_break_insn) m68k_breakpoint;
 
@@ -485,7 +489,7 @@ m68k_svr4_return_value (struct gdbarch *gdbarch, struct value *function,
       /* GCC may return a `long double' in memory too.  */
       || (!tdep->float_return
 	  && code == TYPE_CODE_FLT
-	  && type->length () == 12))
+	  && (type->length () == 12 || type->length () == 8)))
     {
       /* The System V ABI says that:
 
@@ -505,7 +509,11 @@ m68k_svr4_return_value (struct gdbarch *gdbarch, struct value *function,
 	{
 	  ULONGEST addr;
 
-	  regcache_raw_read_unsigned (regcache, tdep->pointer_result_regnum,
+      if (!tdep->float_return && code == TYPE_CODE_FLT)
+	    regcache_raw_read_unsigned (regcache, tdep->struct_value_regnum,
+				      &addr);
+      else
+	    regcache_raw_read_unsigned (regcache, tdep->pointer_result_regnum,
 				      &addr);
 	  read_memory (addr, readbuf, type->length ());
 	}
@@ -1201,7 +1209,11 @@ m68k_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
   if (info.bfd_arch_info && info.bfd_arch_info->mach != 0)
     {
       const bfd_arch_info_type *coldfire_arch = 
+#ifdef __MINT__
+	bfd_lookup_arch (bfd_arch_m68k, bfd_mach_mcf_isa_b_float_emac); /* cfv4e */
+#else
 	bfd_lookup_arch (bfd_arch_m68k, bfd_mach_mcf_isa_a_nodiv);
+#endif
 
       if (coldfire_arch
 	  && ((*info.bfd_arch_info->compatible) 
@@ -1215,6 +1227,10 @@ m68k_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
   int float_return = 0;
   if (has_fp && flavour != m68k_coldfire_flavour)
     float_return = 1;
+#ifdef __MINT__
+  /* m68k-atari-mint* always returns float values in D0 */
+  float_return = 0;
+#else
 #ifdef HAVE_ELF
   if (info.abfd && bfd_get_flavour (info.abfd) == bfd_target_elf_flavour)
     {
@@ -1226,6 +1242,7 @@ m68k_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
 	float_return = 0;
     }
 #endif /* HAVE_ELF */
+#endif
 
   /* If there is already a candidate, use it.  */
   for (best_arch = gdbarch_list_lookup_by_info (arches, &info);
@@ -1303,7 +1320,9 @@ m68k_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
 #else
   tdep->jb_pc = -1;
 #endif
+#ifdef __MINT__
   tdep->pointer_result_regnum = M68K_D0_REGNUM;
+#endif
   tdep->struct_value_regnum = M68K_A1_REGNUM;
   tdep->struct_return = reg_struct_return;
 

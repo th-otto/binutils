@@ -191,6 +191,7 @@ SFILES = \
 	$(srcdir)/linux-x86-low.cc \
 	$(srcdir)/linux-xtensa-low.cc \
 	$(srcdir)/mem-break.cc \
+	$(srcdir)/mint-m68k-low.cc \
 	$(srcdir)/netbsd-aarch64-low.cc \
 	$(srcdir)/netbsd-amd64-low.cc \
 	$(srcdir)/netbsd-i386-low.cc \

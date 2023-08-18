@@ -71,4 +71,9 @@ EXTERN_C int tgetnum (const char *);
 #undef reg
 #endif
 
+#ifdef __MINT__
+/* defined in <ncurses/term.h>, gives compile error when <mint/ostruct.h> is included later */
+#undef buttons
+#endif
+
 #endif /* gdb_curses.h */

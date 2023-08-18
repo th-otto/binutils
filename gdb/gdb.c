@@ -20,6 +20,13 @@
 #include "main.h"
 #include "interps.h"
 
+#include "libcmain.h"
+#if defined(__LINUX_GLIBC_WRAP_H)
+#if __GLIBC_PREREQ(2, 34)
+char __libc_single_threaded;
+#endif
+#endif
+
 int
 main (int argc, char **argv)
 {

@@ -429,3 +429,9 @@
 
 /* Define as `fork' if `vfork' does not work. */
 #undef vfork
+
+#ifdef __MINT__
+#define thread_local
+#endif
+
+#include "../include/libcwrap.h"

@@ -359,6 +359,13 @@ gdb_rl_callback_handler_install (const char *prompt)
   gdb_assert (!callback_handler_installed);
 
   rl_callback_handler_install (prompt, gdb_rl_callback_handler);
+#ifdef __MINT__
+  {
+  const char *value = rl_variable_value("enable-bracketed-paste");
+  if (value != NULL && strcmp(value, "on") == 0)
+    rl_variable_bind("enable-bracketed-paste", NULL);
+  }
+#endif
   callback_handler_installed = true;
 }
 
@@ -927,6 +934,10 @@ handle_fatal_signal (int sig)
    (notably Cygwin) extern thread_local variables cause link errors.  So
    instead, we have scoped_segv_handler_restore, which also makes it impossible
    to accidentally forget to restore it to the original value.  */
+
+#if defined(__MINT__) || !defined(_GLIBCXX_HAVE_TLS)
+#define thread_local
+#endif
 
 static thread_local void (*thread_local_segv_handler) (int);
 

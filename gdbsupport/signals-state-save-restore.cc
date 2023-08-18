@@ -23,6 +23,10 @@
 
 /* The original signal actions and mask.  */
 
+#ifdef __MINT__
+#undef HAVE_SIGACTION
+#endif
+
 #ifdef HAVE_SIGACTION
 static struct sigaction original_signal_actions[NSIG];
 

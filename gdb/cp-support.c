@@ -1543,6 +1543,10 @@ static bool catch_demangler_crashes = true;
 
 /* Stack context and environment for demangler crash recovery.  */
 
+#if defined(__MINT__) || !defined(_GLIBCXX_HAVE_TLS)
+#define thread_local
+#endif
+
 static thread_local SIGJMP_BUF *gdb_demangle_jmp_buf;
 
 /* If true, attempt to dump core from the signal handler.  */

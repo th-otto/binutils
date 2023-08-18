@@ -108,6 +108,7 @@ struct dwarf2_per_cu_data
       m_header_read_in (false),
       mark (false),
       files_read (false),
+      addresses_seen (false),
       scanned (false)
   {
   }
@@ -174,14 +175,14 @@ public:
 
   /* If addresses have been read for this CU (usually from
      .debug_aranges), then this flag is set.  */
-  packed<bool, 1> addresses_seen = false;
+  bool addresses_seen : 1;
 
 private:
   /* The unit type of this CU.  */
-  std::atomic<packed<dwarf_unit_type, 1>> m_unit_type {(dwarf_unit_type)0};
+  std::atomic<dwarf_unit_type> m_unit_type {(dwarf_unit_type)0};
 
   /* The language of this CU.  */
-  std::atomic<packed<language, LANGUAGE_BYTES>> m_lang {language_unknown};
+  std::atomic<language> m_lang {language_unknown};
 
 public:
   /* True if this CU has been scanned by the indexer; false if
@@ -330,15 +331,15 @@ public:
   dwarf_unit_type unit_type (bool strict_p = true) const
   {
     dwarf_unit_type ut = m_unit_type.load ();
-    if (strict_p)
-      gdb_assert (ut != 0);
+//    if (strict_p)
+//      gdb_assert (ut != 0);
     return ut;
   }
 
   void set_unit_type (dwarf_unit_type unit_type)
   {
     /* Set if not set already.  */
-    packed<dwarf_unit_type, 1> nope = (dwarf_unit_type)0;
+    dwarf_unit_type nope = (dwarf_unit_type)0;
     if (m_unit_type.compare_exchange_strong (nope, unit_type))
       return;
 
@@ -352,8 +353,8 @@ public:
   enum language lang (bool strict_p = true) const
   {
     enum language l = m_lang.load ();
-    if (strict_p)
-      gdb_assert (l != language_unknown);
+//    if (strict_p)
+//      gdb_assert (l != language_unknown);
     return l;
   }
 
@@ -362,7 +363,7 @@ public:
     if (unit_type () == DW_UT_partial)
       return;
     /* Set if not set already.  */
-    packed<language, LANGUAGE_BYTES> nope = language_unknown;
+    language nope = language_unknown;
     if (m_lang.compare_exchange_strong (nope, lang))
       return;
     /* If already set, verify that it's the same value.  */

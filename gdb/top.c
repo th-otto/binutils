@@ -795,6 +795,7 @@ gdb_readline_no_editing (const char *prompt)
 	 can interrupt interruptible_select, but not fgetc.  */
       FD_ZERO (&readfds);
       FD_SET (fd, &readfds);
+#ifndef __MINT__ /* hangs in select()? */
       if (interruptible_select (fd + 1, &readfds, NULL, NULL, NULL) == -1)
 	{
 	  if (errno == EINTR)
@@ -804,6 +805,7 @@ gdb_readline_no_editing (const char *prompt)
 	    }
 	  perror_with_name (("select"));
 	}
+#endif
 
       c = fgetc (stream);
 

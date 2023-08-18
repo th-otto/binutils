@@ -77,7 +77,12 @@ public:
 
     /* Ensure size and aligment are what we expect.  */
     gdb_static_assert (sizeof (packed) == Bytes);
+#ifdef __MINT__ /* fails with compilers using STRUCTURE_SIZE_BOUNDARY */
+	struct array_1 { char a[1]; };
+    gdb_static_assert (alignof (packed) == alignof(struct array_1));
+#else
     gdb_static_assert (alignof (packed) == 1);
+#endif
 
     /* Make sure packed can be wrapped with std::atomic.  */
 #if HAVE_IS_TRIVIALLY_COPYABLE

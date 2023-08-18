@@ -457,6 +457,12 @@ case "${host}" in
   i[[3456789]]86-*-msdosdjgpp*)
     noconfigdirs="$noconfigdirs tcl tk itcl"
     ;;
+  m68k-*-mintelf*)
+    noconfigdirs="$noconfigdirs sim"
+    ;;
+  m68k-*-mint*)
+    noconfigdirs="$noconfigdirs gdb libdecnumber sim"
+    ;;
 esac
 
 # Default to --disable-year2038 until we can handle differences between
@@ -1228,9 +1234,6 @@ case "${target}" in
     ;;
   i[[3456789]]86-*-rdos*)
     noconfigdirs="$noconfigdirs gdb"
-    ;;
-  m68k-*-mint*)
-    noconfigdirs="$noconfigdirs gdb libdecnumber sim"
     ;;
   mmix-*-*)
     noconfigdirs="$noconfigdirs gdb"

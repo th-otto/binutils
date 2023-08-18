@@ -127,7 +127,7 @@ remote_connection_is_stdio (void)
 static void
 enable_async_notification (int fd)
 {
-#if defined(F_SETFL) && defined (FASYNC)
+#if defined(F_SETFL) && defined (FASYNC) && !defined(__MINT__)
   int save_fcntl_flags;
 
   save_fcntl_flags = fcntl (fd, F_GETFL, 0);
