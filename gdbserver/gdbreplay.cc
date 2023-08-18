@@ -251,7 +251,7 @@ remote_open (const char *name)
 #endif
     }
 
-#if defined(F_SETFL) && defined (FASYNC)
+#if defined(F_SETFL) && defined (FASYNC) && !defined(__MINT__)
   fcntl (remote_desc_in, F_SETFL, FASYNC);
 #endif
   remote_desc_out = remote_desc_in;

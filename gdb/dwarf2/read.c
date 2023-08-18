@@ -21585,13 +21585,13 @@ dwarf2_per_cu_data::set_lang (enum language lang,
     return;
 
   /* Set if not set already.  */
-  packed<language, LANGUAGE_BYTES> new_value = lang;
-  packed<language, LANGUAGE_BYTES> old_value = m_lang.exchange (new_value);
+  language new_value = lang;
+  language old_value = m_lang.exchange (new_value);
   /* If already set, verify that it's the same value.  */
   gdb_assert (old_value == language_unknown || old_value == lang);
 
-  packed<dwarf_source_language, 2> new_dw = dw_lang;
-  packed<dwarf_source_language, 2> old_dw = m_dw_lang.exchange (new_dw);
+  dwarf_source_language new_dw = dw_lang;
+  dwarf_source_language old_dw = m_dw_lang.exchange (new_dw);
   gdb_assert (old_dw == 0 || old_dw == dw_lang);
 }
 

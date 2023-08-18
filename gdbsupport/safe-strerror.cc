@@ -42,6 +42,10 @@ select_strerror_r (char *res, char *)
 
 /* Implementation of safe_strerror as defined in common-utils.h.  */
 
+#if defined(__MINT__) || !defined(_GLIBCXX_HAVE_TLS)
+#define thread_local
+#endif
+
 const char *
 safe_strerror (int errnum)
 {

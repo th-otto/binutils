@@ -77,7 +77,12 @@ public:
 
     /* Ensure size and aligment are what we expect.  */
     static_assert (sizeof (packed) == Bytes);
+#ifdef __MINT__ /* fails with compilers using STRUCTURE_SIZE_BOUNDARY */
+	struct array_1 { char a[1]; };
+    static_assert (alignof (packed) == alignof(struct array_1));
+#else
     static_assert (alignof (packed) == 1);
+#endif
 
     /* Make sure packed can be wrapped with std::atomic.  */
 #if HAVE_IS_TRIVIALLY_COPYABLE
