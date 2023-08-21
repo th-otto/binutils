@@ -442,6 +442,8 @@ proc supports_persistent_section {} {
 
 # Whether a target support DT_RELR sections.
 proc supports_dt_relr {} {
+    # on old codestreams we don't support DT_RELR anywhere
+    return 0
     if { ([istarget x86_64-*-*]
 	  || [istarget i?86-*-*]
 	  || [istarget powerpc64*-*-*])
