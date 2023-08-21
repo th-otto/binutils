@@ -7,7 +7,7 @@ main:
         leaq    bar(%rip), %rdi
 	addq	%rax, %rdi
 
-	callq	foo
+	callq	foo@PLT
 	xorl	%eax, %eax
 	popq	%rcx
 	retq
