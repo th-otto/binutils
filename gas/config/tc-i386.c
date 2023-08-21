@@ -8842,55 +8842,12 @@ output_branch (void)
   frag_var (rs_machine_dependent, 5, i.reloc[0], subtype, sym, off, p);
 }
 
-#if defined (OBJ_ELF) || defined (OBJ_MAYBE_ELF)
-/* Return TRUE iff PLT32 relocation should be used for branching to
-   symbol S.  */
-
-static bool
-need_plt32_p (symbolS *s)
-{
-  /* PLT32 relocation is ELF only.  */
-  if (!IS_ELF)
-    return false;
-
-#ifdef TE_SOLARIS
-  /* Don't emit PLT32 relocation on Solaris: neither native linker nor
-     krtld support it.  */
-  return false;
-#endif
-
-  /* Since there is no need to prepare for PLT branch on x86-64, we
-     can generate R_X86_64_PLT32, instead of R_X86_64_PC32, which can
-     be used as a marker for 32-bit PC-relative branches.  */
-  if (!object_64bit)
-    return false;
-
-  if (s == NULL)
-    return false;
-
-  /* Weak or undefined symbol need PLT32 relocation.  */
-  if (S_IS_WEAK (s) || !S_IS_DEFINED (s))
-    return true;
-
-  /* Non-global symbol doesn't need PLT32 relocation.  */
-  if (! S_IS_EXTERNAL (s))
-    return false;
-
-  /* Other global symbols need PLT32 relocation.  NB: Symbol with
-     non-default visibilities are treated as normal global symbol
-     so that PLT32 relocation can be used as a marker for 32-bit
-     PC-relative branches.  It is useful for linker relaxation.  */
-  return true;
-}
-#endif
-
 static void
 output_jump (void)
 {
   char *p;
   int size;
   fixS *fixP;
-  bfd_reloc_code_real_type jump_reloc = i.reloc[0];
 
   if (i.tm.opcode_modifier.jump == JUMP_BYTE)
     {
@@ -8964,17 +8921,8 @@ output_jump (void)
       abort ();
     }
 
-#if defined (OBJ_ELF) || defined (OBJ_MAYBE_ELF)
-  if (flag_code == CODE_64BIT && size == 4
-      && jump_reloc == NO_RELOC && i.op[0].disps->X_add_number == 0
-      && need_plt32_p (i.op[0].disps->X_add_symbol))
-    jump_reloc = BFD_RELOC_X86_64_PLT32;
-#endif
-
-  jump_reloc = reloc (size, 1, 1, jump_reloc);
-
   fixP = fix_new_exp (frag_now, p - frag_now->fr_literal, size,
-		      i.op[0].disps, 1, jump_reloc);
+		      i.op[0].disps, 1, reloc (size, 1, 1, i.reloc[0]));
 
   /* All jumps handled here are signed, but don't unconditionally use a
      signed limit check for 32 and 16 bit jumps as we want to allow wrap
@@ -13155,11 +13103,6 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
 	reloc_type = (enum bfd_reloc_code_real) fragP->fr_var;
       else if (size == 2)
 	reloc_type = BFD_RELOC_16_PCREL;
-#if defined (OBJ_ELF) || defined (OBJ_MAYBE_ELF)
-      else if (fragP->tc_frag_data.code64 && fragP->fr_offset == 0
-	       && need_plt32_p (fragP->fr_symbol))
-	reloc_type = BFD_RELOC_X86_64_PLT32;
-#endif
       else
 	reloc_type = BFD_RELOC_32_PCREL;
 

@@ -1910,6 +1910,24 @@ elf_x86_64_convert_load_reloc (bfd *abfd,
   return true;
 }
 
+/* Is the instruction before OFFSET in CONTENTS a 32bit relative
+   branch?  */
+
+static bool
+is_32bit_relative_branch (bfd_byte *contents, bfd_vma offset)
+{
+  /* Opcode		Instruction
+     0xe8		call
+     0xe9		jump
+     0x0f 0x8x		conditional jump */
+  return ((offset > 0
+	   && (contents [offset - 1] == 0xe8
+	       || contents [offset - 1] == 0xe9))
+	  || (offset > 1
+	      && contents [offset - 2] == 0x0f
+	      && (contents [offset - 1] & 0xf0) == 0x80));
+}
+
 /* Look through the relocs for a section during the first phase, and
    calculate needed space in the global offset table, and procedure
    linkage table.  */
@@ -3252,9 +3270,6 @@ elf_x86_64_relocate_section (bfd *output_bfd,
 			&& (eh == NULL
 			    || !UNDEFINED_WEAK_RESOLVED_TO_ZERO (info,
 								 eh)))
-		       || (bfd_link_pie (info)
-			   && !SYMBOL_DEFINED_NON_SHARED_P (h)
-			   && h->def_dynamic)
 		       || (no_copyreloc_p
 			   && h->def_dynamic
 			   && !(h->root.u.def.section->flags & SEC_CODE))))
@@ -3263,20 +3278,25 @@ elf_x86_64_relocate_section (bfd *output_bfd,
 		  || bfd_link_dll (info)))
 	    {
 	      bool fail = false;
+	      bool branch
+		= ((r_type == R_X86_64_PC32
+		    || r_type == R_X86_64_PC32_BND)
+		   && is_32bit_relative_branch (contents, rel->r_offset));
+
 	      if (SYMBOL_REFERENCES_LOCAL_P (info, h))
 		{
 		  /* Symbol is referenced locally.  Make sure it is
-		     defined locally.  */
-		  fail = !SYMBOL_DEFINED_NON_SHARED_P (h);
+		     defined locally or for a branch.  */
+		  fail = !SYMBOL_DEFINED_NON_SHARED_P (h) && !branch;
 		}
 	      else if (bfd_link_pie (info))
 		{
 		  /* We can only use PC-relative relocations in PIE
-		     from non-code sections.  */
+		     from non-code sections or branches.  */
 		  if (h->root.type == bfd_link_hash_undefweak
 		      || (h->type == STT_FUNC
 			  && (sec->flags & SEC_CODE) != 0))
-		    fail = true;
+		    fail = !branch;
 		}
 	      else if (no_copyreloc_p || bfd_link_dll (info))
 		{
@@ -3285,9 +3305,10 @@ elf_x86_64_relocate_section (bfd *output_bfd,
 		     relocations against default and protected
 		     symbols since address of protected function
 		     and location of protected data may not be in
-		     the shared object.   */
+		     the shared object.  We do allow branch to symbol
+		     with non-default visibility.  */
 		  fail = (ELF_ST_VISIBILITY (h->other) == STV_DEFAULT
-			  || ELF_ST_VISIBILITY (h->other) == STV_PROTECTED);
+			  || !branch);
 		}
 
 	      if (fail)
