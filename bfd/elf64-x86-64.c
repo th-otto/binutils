@@ -1807,7 +1807,7 @@ elf_x86_64_convert_load_reloc (bfd *abfd,
 
       if (opcode == 0x8b)
 	{
-	  if (abs_symbol && local_ref && relocx)
+	  if (abs_symbol && local_ref && relocx && rex)
 	    to_reloc_pc32 = false;
 
 	  if (to_reloc_pc32)
