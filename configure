@@ -3187,11 +3187,13 @@ case "${host}" in
   i[3456789]86-*-msdosdjgpp*)
     noconfigdirs="$noconfigdirs tcl tk itcl"
     ;;
+esac
+case "${target}" in
   m68k-*-mintelf*)
     noconfigdirs="$noconfigdirs sim"
     ;;
   m68k-*-mint*)
-    noconfigdirs="$noconfigdirs gdb libdecnumber sim"
+    noconfigdirs="$noconfigdirs gdb gdbserver libdecnumber sim"
     ;;
 esac
 

@@ -147,6 +147,15 @@ case "${gdbserver_host}" in
 			srv_linux_regsets=yes
 			srv_linux_thread_db=yes
 			;;
+  m68*-*-mint*)		if test "$gdb_cv_m68k_is_coldfire" = yes; then
+                          srv_regobj=reg-cf.o
+                        else
+                          srv_regobj=reg-m68k.o
+                        fi
+			srv_tgtobj="mint-low.o mint-m68k-low.o fork-child.o"
+			srv_tgtobj="${srv_tgtobj} nat/fork-inferior.o"
+			srv_tgtobj="${srv_tgtobj} nat/mint-nat.o"
+			;;
   m68*-*-uclinux*)	if test "$gdb_cv_m68k_is_coldfire" = yes; then
                           srv_regobj=reg-cf.o
                         else

@@ -191,9 +191,11 @@ remote_open (const char *name)
     case AF_INET:
       ((struct sockaddr_in *) p->ai_addr)->sin_addr.s_addr = INADDR_ANY;
       break;
+#ifndef __MINT__
     case AF_INET6:
       ((struct sockaddr_in6 *) p->ai_addr)->sin6_addr = in6addr_any;
       break;
+#endif
     default:
       fprintf (stderr, "Invalid 'ai_family' %d\n", p->ai_family);
       exit (1);
