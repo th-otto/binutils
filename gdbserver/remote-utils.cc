@@ -292,9 +292,11 @@ remote_prepare (const char *name)
     case AF_INET:
       ((struct sockaddr_in *) iter->ai_addr)->sin_addr.s_addr = INADDR_ANY;
       break;
+#ifndef __MINT__
     case AF_INET6:
       ((struct sockaddr_in6 *) iter->ai_addr)->sin6_addr = in6addr_any;
       break;
+#endif
     default:
       internal_error (_("Invalid 'ai_family' %d\n"), iter->ai_family);
     }
