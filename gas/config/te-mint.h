@@ -1,4 +1,4 @@
-/* Copyright (C) 2008-2017 Free Software Foundation, Inc.
+/* Copyright (C) 2008-2023 Free Software Foundation, Inc.
 
    This file is part of GAS, the GNU Assembler.
 
@@ -41,3 +41,8 @@
 #else
 #include "obj-format.h"
 #endif
+
+/* No shared lib support, so we don't need to ensure externally
+   visible symbols can be overridden.  */
+#undef  EXTERN_FORCE_RELOC
+#define EXTERN_FORCE_RELOC 0
