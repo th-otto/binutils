@@ -95,13 +95,12 @@ struct mint_internal_info
 #define PRGELF_PHNUM 3 /* Number of ELF Program Headers */
 #define FILE_OFFSET_PRGELF_HEADER 0
 #define VMA_TEXT 0
-#define VMA_OF_FILE_OFFSET(off) ((off) - FILE_OFFSET_TEXT)
 #define FILE_OFFSET_ELF_HEADER (FILE_OFFSET_PRGELF_HEADER + sizeof (PRGELF_HEADER))
-#define VMA_ELF_HEADER_MEMBER(member) VMA_OF_FILE_OFFSET(FILE_OFFSET_ELF_HEADER + offsetof(Elf32_External_Ehdr, member))
 #define PRGELF_RESERVED (0x454c4600 /* ELF0 */ + FILE_OFFSET_ELF_HEADER)
 #define FILE_OFFSET_E_ENTRY (FILE_OFFSET_ELF_HEADER + offsetof(Elf32_External_Ehdr, e_entry))
 #define FILE_OFFSET_TRAMPOLINE (FILE_OFFSET_PRGELF_HEADER + offsetof(PRGELF_HEADER, trampoline))
-#define E_ENTRY_PCREL (FILE_OFFSET_E_ENTRY - FILE_OFFSET_TRAMPOLINE - 2)
+#define E_ENTRY_PCREL (FILE_OFFSET_E_ENTRY - (FILE_OFFSET_TRAMPOLINE + 2))
+#define TEXT_PCREL (FILE_OFFSET_TEXT - (FILE_OFFSET_TRAMPOLINE + 6))
 
 /* We need to store extra information in a bfd. As this target will never be
    used for core dumps, just hijack the core pointer for us.  */
@@ -465,8 +464,6 @@ fix_phdrs (bfd *abfd)
   bfd_vma real_vaddr_data_end;
   const struct elf_backend_data *bed = get_elf_backend_data (abfd);
   struct elf_segment_map *mtext = elf_seg_map (abfd);
-  unsigned int i;
-  bfd_vma phdr_vma;
 
   TRACE ("fix_phdrs %s %s\n", abfd->xvec->name, abfd->filename);
 
@@ -601,16 +598,6 @@ fix_phdrs (bfd *abfd)
       || bed->s->write_out_phdrs (abfd, tdata->phdr, phnum) != 0)
     return false;
 
-  /* Add TPA relocations for the Program Headers.  */
-  phdr_vma = VMA_OF_FILE_OFFSET(i_ehdrp->e_phoff);
-  for (i = 0; i < phnum; i++, phdr_vma += sizeof (Elf32_External_Phdr))
-    {
-      /* Add relocations for absolute addresses.  */
-      bfd_vma relocation = phdr_vma + offsetof (Elf32_External_Phdr, p_vaddr);
-      if (! add_tpa_relocation_entry (abfd, relocation))
-	return false;
-    }
-
   return true;
 }
 
@@ -659,9 +646,9 @@ write_prgelf_header (bfd *abfd)
 
   /* Extended PRG header.  */
   H_PUT_16 (abfd, 0x203a, &ph_ext.trampoline[0]); /* move.l e_entry(pc),d0 */
-  H_PUT_16 (abfd, E_ENTRY_PCREL, &ph_ext.trampoline[1]); /* e_entry pcrel */
-  H_PUT_16 (abfd, 0x4efb, &ph_ext.trampoline[2]); /* jmp disp8(pc,d0.l) */
-  H_PUT_16 (abfd, 0x08fa, &ph_ext.trampoline[3]); /* disp8 from above */
+  H_PUT_16 (abfd, E_ENTRY_PCREL, &ph_ext.trampoline[1]);
+  H_PUT_16 (abfd, 0x4efb, &ph_ext.trampoline[2]); /* jmp VMA_TEXT(pc,d0.l) */
+  H_PUT_16 (abfd, 0x0800 | ((uint8_t) TEXT_PCREL) , &ph_ext.trampoline[3]);
   H_PUT_32 (abfd, myinfo->stkpos, &ph_ext.g_stkpos); /* stack size address */
 
   /* Write the PRG/ELF header.  */
