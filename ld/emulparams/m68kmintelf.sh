@@ -24,3 +24,6 @@ COMPILE_IN=yes
 
 # Not quite right for ELF, but we provide both symbols
 USER_LABEL_PREFIX=_
+
+# Don't search for dynamic libraries (yet)
+LDEMUL_OPEN_DYNAMIC_ARCHIVE=NULL
