@@ -19,5 +19,8 @@ SCRIPT_NAME=m68kmintelf
 GENERATE_SHLIB_SCRIPT=
 GENERATE_PIE_SCRIPT=
 
-# Use external linker script files.
-#COMPILE_IN=no
+# Use builtin linker script files.
+COMPILE_IN=yes
+
+# Not quite right for ELF, but we provide both symbols
+USER_LABEL_PREFIX=_

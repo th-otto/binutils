@@ -44,7 +44,7 @@ SECTIONS
   .text : SUBALIGN(2)
   {
     PROVIDE(_start = .); /* Default entry point if __start isn't defined.  */
-    PROVIDE(__start = .);
+    PROVIDE(${USER_LABEL_PREFIX}_start = .);
     *crt0.o(.text .text.*)
     *(.text.unlikely .text.*_unlikely .text.unlikely.*)
     *(.text.exit .text.exit.*)
@@ -57,11 +57,44 @@ SECTIONS
   } :TEXT =0x4afc /* Pad with ILLEGAL instruction */
 
   /* End of .text section.  */
+  __etext = .;
   PROVIDE(etext = .);
-  PROVIDE(_etext = .);
+  PROVIDE(${USER_LABEL_PREFIX}etext = .);
+
+  /* Preinitializers array.  */
+  .preinit_array (READONLY) :
+  {
+    PROVIDE_HIDDEN (__preinit_array_start = .);
+    PROVIDE_HIDDEN (${USER_LABEL_PREFIX}__preinit_array_start = .);
+    KEEP (*(.preinit_array))
+    PROVIDE_HIDDEN (__preinit_array_end = .);
+    PROVIDE_HIDDEN (${USER_LABEL_PREFIX}__preinit_array_end = .);
+  }
+
+  /* Initializers array.  */
+  .init_array (READONLY) :
+  {
+    PROVIDE_HIDDEN (__init_array_start = .);
+    PROVIDE_HIDDEN (${USER_LABEL_PREFIX}__init_array_start = .);
+    KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
+    KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
+    PROVIDE_HIDDEN (__init_array_end = .);
+    PROVIDE_HIDDEN (${USER_LABEL_PREFIX}__init_array_end = .);
+  }
+
+  /* Finalizers array.  */
+  .fini_array (READONLY) :
+  {
+    PROVIDE_HIDDEN (__fini_array_start = .);
+    PROVIDE_HIDDEN (${USER_LABEL_PREFIX}__fini_array_start = .);
+    KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
+    KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
+    PROVIDE_HIDDEN (__fini_array_end = .);
+    PROVIDE_HIDDEN (${USER_LABEL_PREFIX}__fini_array_end = .);
+  }
 
   /* Global Constructors.  */
-  .ctors (READONLY) : ALIGN(2)
+  .ctors (READONLY) :
   {
     /* gcc uses crtbegin.o to find the start of
        the constructors, so we make sure it is
@@ -84,7 +117,7 @@ SECTIONS
   }
 
   /* Global Destructors.  */
-  .dtors (READONLY) : ALIGN(2)
+  .dtors (READONLY) :
   {
     KEEP (*crtbegin.o(.dtors))
     KEEP (*crtbegin?.o(.dtors))
@@ -116,7 +149,7 @@ SECTIONS
 
   /* End of .data section. */
   PROVIDE(edata = .);
-  PROVIDE(_edata = .);
+  PROVIDE(${USER_LABEL_PREFIX}edata = .);
 
   /* Exception handling. */
   .eh_frame       : ONLY_IF_RW { KEEP (*(.eh_frame)) *(.eh_frame.*) }
@@ -136,7 +169,7 @@ SECTIONS
 
   /* End of .bss section */
   PROVIDE(end = .);
-  PROVIDE(_end = .);
+  PROVIDE(${USER_LABEL_PREFIX}end = .);
 
   /*** Extra sections not loaded by the operating system **********************/
 
