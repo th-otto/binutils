@@ -74,7 +74,7 @@ struct mint_internal_info
   bfd_size_type tparel_size;	     /* Size of TPA relative relocation
 					information.  */
 #define MINT_RELOC_CHUNKSIZE 0x1000
-  bfd_vma	*relocs;	     /* Array of address relocations.  */
+  adr_t		*relocs;	     /* Array of address relocations.  */
   unsigned int  relocs_used;	     /* Number of relocation entries
 					already used up.  */
   unsigned int  relocs_allocated;    /* Number of relocation entries
@@ -327,7 +327,7 @@ bfd_read_4byte_int (bfd *abfd, file_ptr pos)
    Actual relocation will be performed by the OS at load time.  */
 
 static bool
-add_tpa_relocation_entry (bfd *abfd, bfd *input_bfd, bfd_vma address)
+add_tpa_relocation_entry (bfd *abfd, bfd *input_bfd, adr_t address)
 {
   struct mint_internal_info *myinfo = get_mint_internal_info (abfd);
 
@@ -340,11 +340,11 @@ add_tpa_relocation_entry (bfd *abfd, bfd *input_bfd, bfd_vma address)
     }
 
   /* Enlarge the buffer if necessary.  */
-  if (myinfo->relocs_used * sizeof (bfd_vma) >= myinfo->relocs_allocated)
+  if (myinfo->relocs_used >= myinfo->relocs_allocated)
     {
-      bfd_vma *newbuf;
+      adr_t *newbuf;
       myinfo->relocs_allocated += MINT_RELOC_CHUNKSIZE;
-      newbuf = bfd_realloc (myinfo->relocs, myinfo->relocs_allocated);
+      newbuf = bfd_realloc (myinfo->relocs, myinfo->relocs_allocated * sizeof (*myinfo->relocs));
       if (newbuf == NULL)
 	return false;
 
@@ -447,7 +447,7 @@ m68k_elf32_atariprg_final_link (bfd *abfd, struct bfd_link_info *info)
   TRACE ("m68k_elf32_atariprg_final_link END %s %s\n", abfd->xvec->name, abfd->filename);
 
   /* Remember the address of the stack size variable.  */
-  h = (struct elf_link_hash_entry *) bfd_hash_lookup (&info->hash->table, info->output_bfd->xvec->symbol_leading_char ? "__stksize" :  "_stksize", false, false);
+  h = (struct elf_link_hash_entry *) bfd_hash_lookup (&info->hash->table, info->output_bfd->xvec->symbol_leading_char ? "__stksize" : "_stksize", false, false);
   if (h != NULL)
     {
       asection *input_sec;
@@ -704,7 +704,7 @@ write_prgelf_header (bfd *abfd)
 static int
 vma_cmp (const void *v1, const void *v2)
 {
-  return (int) ((*((bfd_vma *) v1)) - (*((bfd_vma *) v2)));
+  return (int) ((*((adr_t *) v1)) - (*((adr_t *) v2)));
 }
 
 /* Alloc and fill the TPA relocation table.  */
@@ -717,7 +717,8 @@ fill_tparel (bfd *abfd)
   bfd_size_type bytes;
   bfd_byte *ptr;
   unsigned int val;
-  bfd_vma last;
+  adr_t last;
+  unsigned int errors;
 
   TRACE ("fill_tparel %s %s\n", abfd->xvec->name, abfd->filename);
 
@@ -726,7 +727,7 @@ fill_tparel (bfd *abfd)
 
   /* Sort the relocation info.  */
   if (myinfo->relocs != NULL)
-    qsort (myinfo->relocs, myinfo->relocs_used, sizeof (bfd_vma), vma_cmp);
+    qsort (myinfo->relocs, myinfo->relocs_used, sizeof (*myinfo->relocs), vma_cmp);
 
   /* Now calculate the number of bytes we need.  The relocation info
      is encoded as follows:  The first entry is a 32-bit value
@@ -736,12 +737,25 @@ fill_tparel (bfd *abfd)
      add 254 bytes to the current offset.  The list is then terminated
      with the byte 0.  */
   bytes = 4; /* First entry is a long.  */
+  errors = 0;
   for (i = 1; i < myinfo->relocs_used; i++)
     {
-      bfd_signed_vma diff = myinfo->relocs[i] - myinfo->relocs[i - 1];
-      BFD_ASSERT (diff > 0); /* No backward relocation.  */
+      adr_t diff = myinfo->relocs[i] - myinfo->relocs[i - 1];
+      /* No backward relocation.  */
+      if (myinfo->relocs[i] <= myinfo->relocs[i - 1] + 2)
+	{
+	  _bfd_error_handler ("%pB: duplicate relocation: " ADR_F " <= " ADR_F,
+	    abfd,
+	    (adr_t)myinfo->relocs[i], (adr_t)myinfo->relocs[i - 1]);
+	  errors++;
+	}
       BFD_ASSERT (! (diff & 1)); /* No relocation to odd address.  */
       bytes += (diff + 253) / 254;
+    }
+  if (errors != 0)
+    {
+      bfd_set_error (bfd_error_bad_value);
+      return false;
     }
   /* Last entry is (bfd_byte) 0 if there are some relocations.  */
   if (myinfo->relocs_used > 0)
@@ -772,7 +786,7 @@ fill_tparel (bfd *abfd)
   /* Write next entries.  Always 8-bit.  */
   for (; i < myinfo->relocs_used; i++)
     {
-      bfd_signed_vma diff;
+      adr_t diff;
 
       /*
        * Do not add an entry, if the address to be relocated is zero.
