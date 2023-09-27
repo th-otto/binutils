@@ -1,1 +1,1 @@
-../bfd/stat64.c
+#include "../bfd/stat64.c"
