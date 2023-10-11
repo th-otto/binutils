@@ -92,7 +92,11 @@ lzma_open (struct bfd *nbfd, asection *section)
   lzma_stream_flags options;
   gdb_byte footer[LZMA_STREAM_HEADER_SIZE];
   lzma_index *index;
+#ifdef LZMA_MEM_MAX
+  lzma_mem_t memlimit = LZMA_MEM_MAX;
+#else
   uint64_t memlimit = UINT64_MAX;
+#endif
   struct gdb_lzma_stream *lstream;
   size_t pos;
 
