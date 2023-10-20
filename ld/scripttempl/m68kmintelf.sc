@@ -46,9 +46,9 @@ SECTIONS
     PROVIDE(_start = .); /* Default entry point if __start isn't defined.  */
     PROVIDE(${USER_LABEL_PREFIX}_start = .);
     *crt0.o(.text .text.*)
+    *(.text.startup .text.startup.*)
     *(.text.unlikely .text.*_unlikely .text.unlikely.*)
     *(.text.exit .text.exit.*)
-    *(.text.startup .text.startup.*)
     *(.text.hot .text.hot.*)
     *(SORT(.text.sorted.*))
     *(.text .stub .text.* .gnu.linkonce.t.*)
