@@ -64,6 +64,12 @@ unlink_if_ordinary (const char *name)
 {
   struct stat st;
 
+/* MS-Windows 'stat' function (and in turn, S_ISREG)
+   reports the null device as a regular file.  */
+#ifdef _WIN32
+  if (stricmp (name, "nul") == 0)
+    return 1;
+#endif
   if (lstat (name, &st) == 0
       && (S_ISREG (st.st_mode) || S_ISLNK (st.st_mode)))
     return unlink (name);
