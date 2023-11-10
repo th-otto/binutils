@@ -11005,7 +11005,7 @@ fi
 
   WIN32APILIBS=
   case ${host} in
-    *mingw32*)
+    *mingw*)
 
 $as_echo "#define USE_WIN32API 1" >>confdefs.h
 
@@ -14344,7 +14344,7 @@ $as_echo "#define DEVELOPMENT 1" >>confdefs.h
 fi
 
 case ${host} in
-  *mingw32*)
+  *mingw*)
 
 $as_echo "#define USE_WIN32API 1" >>confdefs.h
 
