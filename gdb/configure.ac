@@ -1825,7 +1825,7 @@ SER_HARDWIRE="ser-base.o ser-unix.o ser-pipe.o ser-tcp.o"
 case ${host} in
   *go32* ) SER_HARDWIRE=ser-go32.o ;;
   *djgpp* ) SER_HARDWIRE=ser-go32.o ;;
-  *mingw32*) SER_HARDWIRE="ser-base.o ser-tcp.o ser-mingw.o" ;;
+  *mingw*) SER_HARDWIRE="ser-base.o ser-tcp.o ser-mingw.o" ;;
   *) SER_HARDWIRE="$SER_HARDWIRE ser-uds.o" ;;
 esac
 AC_SUBST(SER_HARDWIRE)
