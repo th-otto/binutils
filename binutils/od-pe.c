@@ -411,7 +411,7 @@ dump_pe_file_header (bfd *                            abfd,
       PEPAOUTHDR xhdr;
 
       printf (_("\n  Optional 64-bit AOUT Header (at offset %#lx):\n"),
-	      ihdr_off + sizeof (* ihdr));
+	      ihdr_off + (unsigned long) sizeof (* ihdr));
 
       // Fortunately, it appears that the size and layout of the
       // PEPAOUTHDR header is consistent across all architectures.
@@ -440,7 +440,7 @@ dump_pe_file_header (bfd *                            abfd,
 	  /* There is no data_start field in the PE+ standard header.  */
 
 	  printf (_("\n  Optional PE+ Header (at offset %#lx):\n"),
-		  ihdr_off + sizeof (* ihdr) + sizeof (xhdr.standard));
+		  ihdr_off + (unsigned long) sizeof (* ihdr) + (unsigned long) sizeof (xhdr.standard));
 
 	  printf (_("Image Base:\t\t\t%#lx\n"),
 		  (long) bfd_h_get_32 (abfd, xhdr.ImageBase));
