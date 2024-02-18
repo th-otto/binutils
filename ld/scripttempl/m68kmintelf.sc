@@ -43,8 +43,6 @@ SECTIONS
   /* Program code.  */
   .text : SUBALIGN(2)
   {
-    PROVIDE(_start = .); /* Default entry point if __start isn't defined.  */
-    PROVIDE(${USER_LABEL_PREFIX}_start = .);
     *crt0.o(.text .text.*)
     *(.text.startup .text.startup.*)
     *(.text.unlikely .text.*_unlikely .text.unlikely.*)
