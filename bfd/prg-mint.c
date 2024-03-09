@@ -1,5 +1,5 @@
 /* BFD backend for traditional MiNT executables.
-   Copyright (C) 1998-2017 Free Software Foundation, Inc.
+   Copyright (C) 1998-2024 Free Software Foundation, Inc.
    Originally written by Guido Flohr (guido@freemint.de).
    Modified by Vincent Riviere (vincent.riviere@freesbee.fr).
 
@@ -341,7 +341,7 @@ MY (object_p) (bfd *abfd)
   struct mint_internal_info *myinfo;
 
   /* Read the exec bytesd from the file.  */
-  if (bfd_bread (&exec_bytes, amt, abfd) != amt)
+  if (bfd_read (&exec_bytes, amt, abfd) != amt)
     {
       if (bfd_get_error () != bfd_error_system_call)
 	bfd_set_error (bfd_error_wrong_format);
@@ -408,7 +408,7 @@ MY (object_p) (bfd *abfd)
     {
       /* Read the information from the bfd.  */
       if (bfd_seek (abfd, myinfo->tparel_pos, SEEK_SET) != 0
-	  || (bfd_bread (myinfo->tparel, myinfo->tparel_size, abfd)
+	  || (bfd_read (myinfo->tparel, myinfo->tparel_size, abfd)
 	      != myinfo->tparel_size))
 	return NULL;
     }
@@ -460,7 +460,7 @@ write_dri_symbol (bfd *abfd, const char *name, int type, bfd_vma value)
   bfd_put_16 (abfd, type, sym.a_type);
   bfd_put_32 (abfd, value, sym.a_value);
 
-  if (bfd_bwrite (&sym, DRI_SYMBOL_SIZE, abfd) != DRI_SYMBOL_SIZE)
+  if (bfd_write (&sym, DRI_SYMBOL_SIZE, abfd) != DRI_SYMBOL_SIZE)
     return -1;
   written_bytes += DRI_SYMBOL_SIZE;
 
@@ -470,7 +470,7 @@ write_dri_symbol (bfd *abfd, const char *name, int type, bfd_vma value)
 
       strncpy (more_name, name + sizeof (sym.a_name), DRI_SYMBOL_SIZE);
 
-      if (bfd_bwrite (more_name, DRI_SYMBOL_SIZE, abfd) != DRI_SYMBOL_SIZE)
+      if (bfd_write (more_name, DRI_SYMBOL_SIZE, abfd) != DRI_SYMBOL_SIZE)
 	return -1;
       written_bytes += DRI_SYMBOL_SIZE;
     }
@@ -1441,7 +1441,7 @@ write_tparel (bfd *abfd, struct internal_exec *execp)
   if (bfd_seek (abfd, myinfo->tparel_pos, SEEK_SET) != 0)
     return false;
 
-  if (bfd_bwrite (myinfo->tparel, myinfo->tparel_size, abfd)
+  if (bfd_write (myinfo->tparel, myinfo->tparel_size, abfd)
       != myinfo->tparel_size)
     return false;
 
@@ -1522,7 +1522,7 @@ write_exec_header (bfd *abfd, struct internal_exec *execp, struct external_exec 
   if (bfd_seek (abfd, (file_ptr) 0, SEEK_SET) != 0)
     return false;
 
-  if (bfd_bwrite (exec_bytes, (bfd_size_type) EXEC_BYTES_SIZE, abfd)
+  if (bfd_write (exec_bytes, (bfd_size_type) EXEC_BYTES_SIZE, abfd)
       != EXEC_BYTES_SIZE)
     return false;
 
@@ -1536,7 +1536,7 @@ write_exec_header (bfd *abfd, struct internal_exec *execp, struct external_exec 
     if (bfd_seek (abfd, (file_ptr) myinfo->stkpos, SEEK_SET) != 0)
       return false;
 
-    if (bfd_bwrite (big_endian_stack_size, 4, abfd) != 4)
+    if (bfd_write (big_endian_stack_size, 4, abfd) != 4)
       return false;
   }
 
@@ -1625,7 +1625,7 @@ MY (print_private_bfd_data) (bfd *abfd, void *ptr)
   if (myinfo->stkpos != 0)
     {
       if (bfd_seek (abfd, myinfo->stkpos, SEEK_SET) != 0
-	  || (bfd_bread (&stksize, sizeof(long), abfd) != sizeof(long)))
+	  || (bfd_read (&stksize, sizeof(long), abfd) != sizeof(long)))
 	return false;
 
       stksize = bfd_get_signed_32 (abfd, &stksize);
