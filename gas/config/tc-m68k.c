@@ -464,6 +464,7 @@ static int reverse_16_bits (int in);
 static int reverse_8_bits (int in);
 static void install_gen_operand (int mode, int val);
 static void install_operand (int mode, int val);
+static void s_bss (int);
 static void s_data1 (int);
 static void s_data2 (int);
 static void s_even (int);
@@ -870,6 +871,7 @@ const pseudo_typeS md_pseudo_table[] =
 {
   {"data1", s_data1, 0},
   {"data2", s_data2, 0},
+  {"bss", s_bss, 0},
   {"even", s_even, 0},
   {"skip", s_space, 0},
   {"proc", s_proc, 0},
@@ -5629,6 +5631,20 @@ s_data2 (int ignore ATTRIBUTE_UNUSED)
 {
   subseg_set (data_section, 2);
   demand_empty_rest_of_line ();
+}
+
+static void
+s_bss (int ignore ATTRIBUTE_UNUSED)
+{
+#ifdef OBJ_ELF
+  obj_elf_bss(ignore);
+#else
+  /* We don't support putting frags in the BSS segment, we fake it
+     by marking in_bss, then looking at s_skip for clues.  */
+
+  subseg_set (bss_section, 0);
+  demand_empty_rest_of_line ();
+#endif
 }
 
 static void
