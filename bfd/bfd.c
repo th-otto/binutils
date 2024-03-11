@@ -731,6 +731,11 @@ CODE_FRAGMENT
 .
 */
 
+#if !defined(TLS) || defined(__MINT__)
+#undef TLS
+#define TLS
+#endif
+
 static TLS bfd_error_type bfd_error;
 static TLS bfd_error_type input_error;
 static TLS bfd *input_bfd;
