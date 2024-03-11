@@ -800,6 +800,11 @@ const char *const bfd_errmsgs[] =
   N_("#<invalid error code>")
 };
 
+#if !defined(TLS) || defined(__MINT__)
+#undef TLS
+#define TLS
+#endif
+
 static TLS bfd_error_type bfd_error;
 static TLS char *_bfd_error_buf;
 
