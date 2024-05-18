@@ -3574,6 +3574,8 @@ decode_M68K_machine_flags (char *out, unsigned int e_flags)
 {
   if ((e_flags & EF_M68K_ARCH_MASK) == EF_M68K_M68000)
     out = stpcpy (out, ", m68000");
+  else if ((e_flags & EF_M68K_ARCH_MASK) == 0)
+    out = stpcpy (out, ", assume m68000");
   else if ((e_flags & EF_M68K_ARCH_MASK) == EF_M68K_CPU32)
     out = stpcpy (out, ", cpu32");
   else if ((e_flags & EF_M68K_ARCH_MASK) == EF_M68K_FIDO)
@@ -3638,6 +3640,10 @@ decode_M68K_machine_flags (char *out, unsigned int e_flags)
 	  out = stpcpy (out, mac);
 	}
     }
+  if (e_flags & EF_M68K_SHORTINT)
+    out = stpcpy (out, ", short");
+  if (e_flags & EF_M68K_FASTCALL)
+    out = stpcpy (out, ", fastcall");
   return out;
 }
 
