@@ -7897,6 +7897,18 @@ m68k_elf_final_processing (void)
 {
   unsigned flags = 0;
 
+  if (!initialized)
+  {
+  if (!selected_cpu && !selected_arch)
+    {
+      /* We've not selected an architecture yet.  Set the default
+	 now.  We do this lazily so that an initial .cpu or .arch directive
+	 can specify.  */
+      if (!m68k_set_cpu (TARGET_CPU, 1, 1))
+	as_bad (_("unrecognized default cpu `%s'"), TARGET_CPU);
+    }
+    m68k_init_arch ();
+  }
   if (arch_coldfire_fpu (current_architecture))
     flags |= EF_M68K_CFV4E;
   /* Set file-specific flags if this is a cpu32 processor.  */
@@ -7904,8 +7916,7 @@ m68k_elf_final_processing (void)
     flags |= EF_M68K_CPU32;
   else if (cpu_of_arch (current_architecture) & fido_a)
     flags |= EF_M68K_FIDO;
-  else if ((cpu_of_arch (current_architecture) & m68000up)
-	   && !(cpu_of_arch (current_architecture) & m68020up))
+  else if ((cpu_of_arch (current_architecture) & m68000up))
     flags |= EF_M68K_M68000;
 
   if (current_architecture & mcfisa_a)
@@ -8095,6 +8106,17 @@ m68k_elf_gnu_attribute (int ignored ATTRIBUTE_UNUSED)
 
       if (tag == Tag_GNU_M68K_ABI_FP && val > 2)
 	as_warn (_("unknown .gnu_attribute value"));
+    }
+  if (tag == Tag_GNU_M68K_ABI)
+    {
+      unsigned int val;
+
+      val = bfd_elf_get_obj_attr_int (stdoutput, OBJ_ATTR_GNU, tag);
+
+      if (val & 2)
+	elf_elfheader (stdoutput)->e_flags |= EF_M68K_SHORTINT;
+      if (val & 4)
+	elf_elfheader (stdoutput)->e_flags |= EF_M68K_FASTCALL;
     }
 }
 #endif

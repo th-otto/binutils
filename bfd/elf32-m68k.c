@@ -1059,18 +1059,18 @@ elf_m68k_final_write_processing (bfd *abfd)
   int mach = bfd_get_mach (abfd);
   unsigned long e_flags = elf_elfheader (abfd)->e_flags;
 
-  if (!e_flags)
+  if ((e_flags & ~(EF_M68K_FASTCALL | EF_M68K_SHORTINT)) == 0)
     {
       unsigned int arch_mask;
 
       arch_mask = bfd_m68k_mach_to_features (mach);
 
-      if (arch_mask & m68000)
-	e_flags = EF_M68K_M68000;
-      else if (arch_mask & cpu32)
-	e_flags = EF_M68K_CPU32;
+      if (arch_mask & cpu32)
+	e_flags |= EF_M68K_CPU32;
       else if (arch_mask & fido_a)
-	e_flags = EF_M68K_FIDO;
+	e_flags |= EF_M68K_FIDO;
+      else if (arch_mask & m68000up)
+	e_flags |= EF_M68K_M68000;
       else
 	{
 	  switch (arch_mask
@@ -1190,6 +1190,7 @@ elf32_m68k_merge_private_bfd_data (bfd *ibfd, struct bfd_link_info *info)
   flagword out_isa;
   flagword in_isa;
   const bfd_arch_info_type *arch_info;
+  static bfd *first_fp;
 
   if (bfd_get_flavour (ibfd) != bfd_target_elf_flavour
       || bfd_get_flavour (obfd) != bfd_target_elf_flavour)
@@ -1214,11 +1215,48 @@ elf32_m68k_merge_private_bfd_data (bfd *ibfd, struct bfd_link_info *info)
     {
       elf_flags_init (obfd) = true;
       out_flags = in_flags;
+      first_fp = ibfd;
     }
   else
     {
-      out_flags = elf_elfheader (obfd)->e_flags;
       unsigned int variant_mask;
+      flagword first_flags;
+
+      out_flags = elf_elfheader (obfd)->e_flags;
+      
+      if (first_fp == 0)
+      {
+        first_fp = ibfd;
+      }
+
+      first_flags = elf_elfheader (first_fp)->e_flags;
+      /*
+       * Older binutils sometimes did not write any value to e_flag;
+       * ignore objects where it is completely zero.
+       * Otherwise check whether both objects have a Tag_GNU_M68K_ABI attribute
+       */
+      if (first_flags != 0 &&
+          in_flags != 0 &&
+          (bfd_elf_get_obj_attr_int(first_fp, OBJ_ATTR_GNU, Tag_GNU_M68K_ABI) & 1) &&
+	  (bfd_elf_get_obj_attr_int(ibfd, OBJ_ATTR_GNU, Tag_GNU_M68K_ABI) & 1))
+	{
+	  if ((first_flags ^ in_flags) & EF_M68K_SHORTINT)
+	    {
+	      _bfd_error_handler
+		/* xgettext:c-format */
+		(_("%pB and %pB do not use same int size"),
+		 first_fp, ibfd);
+	      return false;
+	    }
+	  if ((first_flags ^ in_flags) & EF_M68K_FASTCALL)
+	    {
+	      _bfd_error_handler
+		/* xgettext:c-format */
+		(_("%pB and %pB do not use same calling convertion"),
+		 first_fp, ibfd);
+	      return false;
+	    }
+	}
 
       if ((in_flags & EF_M68K_ARCH_MASK) == EF_M68K_M68000)
 	variant_mask = 0;
@@ -1239,7 +1277,7 @@ elf32_m68k_merge_private_bfd_data (bfd *ibfd, struct bfd_link_info *info)
 	      && (out_flags & EF_M68K_ARCH_MASK) == EF_M68K_CPU32))
 	out_flags = EF_M68K_FIDO;
       else
-      out_flags |= in_flags ^ in_isa;
+	out_flags |= in_flags ^ in_isa;
     }
   elf_elfheader (obfd)->e_flags = out_flags;
 
