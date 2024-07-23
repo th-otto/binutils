@@ -43,8 +43,8 @@ SECTIONS
   /* Program code.  */
   .text : SUBALIGN(2)
   {
-    *crt0.o(.text .text.*)
     *(.text.startup .text.startup.*)
+    *crt0.o(.text .text.*)
     *(.text.unlikely .text.*_unlikely .text.unlikely.*)
     *(.text.exit .text.exit.*)
     *(.text.hot .text.hot.*)
