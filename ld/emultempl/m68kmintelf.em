@@ -35,6 +35,7 @@ SUPER_LDEMUL_FINISH=${LDEMUL_FINISH-finish_default}
 fragment <<EOF
 
 #include "../bfd/elf32-atariprg.h"
+#include "ldlex.h"
 
 /* Option flags.  */
 static uint32_t prg_flags = (_MINT_F_FASTLOAD | _MINT_F_ALTLOAD
@@ -89,29 +90,6 @@ EOF
 # Define some shell vars to insert bits of code into the standard elf
 # parse_args and list_options functions.
 #
-PARSE_AND_LIST_PROLOGUE=$PARSE_AND_LIST_PROLOGUE'
-/* Used for setting flags in the MiNT header.  */
-enum mintelf_options
-{
-  OPTION_FASTLOAD = 500,
-  OPTION_NO_FASTLOAD,
-  OPTION_FASTRAM,
-  OPTION_NO_FASTRAM,
-  OPTION_FASTALLOC,
-  OPTION_NO_FASTALLOC,
-  OPTION_BESTFIT,
-  OPTION_NO_BESTFIT,
-  OPTION_BASEREL,
-  OPTION_NO_BASEREL,
-  OPTION_MEM_PRIVATE,
-  OPTION_MEM_GLOBAL,
-  OPTION_MEM_SUPER,
-  OPTION_MEM_READONLY,
-  OPTION_PRG_FLAGS,
-  OPTION_STACK
-};
-'
-
 PARSE_AND_LIST_LONGOPTS=$PARSE_AND_LIST_LONGOPTS'
   {"mfastload", no_argument, NULL, OPTION_FASTLOAD},
   {"mno-fastload", no_argument, NULL, OPTION_NO_FASTLOAD},

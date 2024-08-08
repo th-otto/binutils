@@ -26,6 +26,7 @@ fragment <<EOF
 #include "getopt.h"
 #include "ldgram.h"
 #include "libiberty.h"
+#include "ldlex.h"
 
 /* Standard GEMDOS program flags.  */
 #define _MINT_F_FASTLOAD      0x01    /* Don't clear heap.  */
@@ -48,26 +49,6 @@ static flagword prg_flags = (_MINT_F_FASTLOAD | _MINT_F_ALTLOAD
  * must be overriden with the value of stack_size.  */
 static bool override_stack_size = false;
 static bfd_signed_vma stack_size;
-
-/* MiNT format extra command line options.  */
-
-/* Used for setting flags in the MiNT header.  */
-#define OPTION_FASTLOAD (300)
-#define OPTION_NO_FASTLOAD (OPTION_FASTLOAD + 1)
-#define OPTION_FASTRAM (OPTION_NO_FASTLOAD + 1)
-#define OPTION_NO_FASTRAM (OPTION_FASTRAM + 1)
-#define OPTION_FASTALLOC (OPTION_NO_FASTRAM + 1)
-#define OPTION_NO_FASTALLOC (OPTION_FASTALLOC + 1)
-#define OPTION_BESTFIT (OPTION_NO_FASTALLOC + 1)
-#define OPTION_NO_BESTFIT (OPTION_BESTFIT + 1)
-#define OPTION_BASEREL (OPTION_NO_BESTFIT + 1)
-#define OPTION_NO_BASEREL (OPTION_BASEREL + 1)
-#define OPTION_MEM_PRIVATE (OPTION_NO_BASEREL + 1)
-#define OPTION_MEM_GLOBAL (OPTION_MEM_PRIVATE + 1)
-#define OPTION_MEM_SUPER (OPTION_MEM_GLOBAL + 1)
-#define OPTION_MEM_READONLY (OPTION_MEM_SUPER + 1)
-#define OPTION_PRG_FLAGS (OPTION_MEM_READONLY + 1)
-#define OPTION_STACK (OPTION_PRG_FLAGS + 1)
 
 static void
 gld${EMULATION_NAME}_add_options
