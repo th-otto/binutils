@@ -85,12 +85,11 @@ mint_ptrace_fun (void)
 
 int
 mint_process_target::create_inferior (const char *program,
-					const std::vector<char *> &program_args)
+					const std::string &program_args)
 {
   DTRACE("%s\n", __func__);
-  std::string str_program_args = construct_inferior_arguments (program_args);
 
-  pid_t pid = fork_inferior (program, str_program_args.c_str (),
+  pid_t pid = fork_inferior (program, program_args.c_str (),
 			     get_environ ()->envp (), mint_ptrace_fun,
 			     nullptr, nullptr, nullptr, nullptr);
 
@@ -143,7 +142,7 @@ mint_process_target::resume (struct thread_resume *resume_info, size_t n)
   const bool step = resume_info[0].kind == resume_step;
 
   if (resume_ptid == minus_one_ptid)
-    resume_ptid = ptid_of (current_thread);
+    resume_ptid = current_thread->id;
 
   const pid_t pid = resume_ptid.pid ();
   regcache_invalidate_pid (pid);
@@ -269,7 +268,7 @@ mint_wait (ptid_t ptid, struct target_waitstatus *ourstatus,
 #else
   if (find_thread_ptid (wptid) == nullptr)
   {
-    add_thread (wptid, NULL);
+    find_process_pid (wptid.pid ())->add_thread (wptid, NULL);
     ourstatus->set_thread_created ();
     return wptid;
   }
@@ -350,7 +349,7 @@ mint_process_target::wait (ptid_t ptid, struct target_waitstatus *ourstatus,
 	 that was not fully initialized during the attach stage.  */
       if (wptid.lwp () != 0 && !find_thread_ptid (wptid)
 	  && ourstatus->kind () != TARGET_WAITKIND_THREAD_EXITED)
-	add_thread (wptid, nullptr);
+	find_process_pid (wptid.pid ())->add_thread (wptid, nullptr);
 
       switch (ourstatus->kind ())
 	{
@@ -371,7 +370,7 @@ mint_process_target::wait (ptid_t ptid, struct target_waitstatus *ourstatus,
 	  /* FALLTHROUGH */
 	case TARGET_WAITKIND_SPURIOUS:
 	  /* Spurious events are unhandled by the gdbserver core.  */
-	  if (ptrace (PT_CONTINUE, pid_of(current_process()), (PTRACE_TYPE_ARG3) 1, 0)
+	  if (ptrace (PT_CONTINUE, current_process()->pid, (PTRACE_TYPE_ARG3) 1, 0)
 	      == -1)
 	    perror_with_name (("ptrace"));
 	  break;
@@ -387,7 +386,7 @@ int
 mint_process_target::kill (process_info *process)
 {
   DTRACE("%s\n", __func__);
-  pid_t pid = pid_of(process);
+  pid_t pid = process->pid;
   if (ptrace (PT_KILL, pid, nullptr, 0) == -1)
     return -1;
 
@@ -417,7 +416,9 @@ void
 mint_process_target::mourn (struct process_info *proc)
 {
   DTRACE("%s\n", __func__);
-  for_each_thread (pid_of(proc), remove_thread);
+#if 0
+  proc->for_each_thread (remove_thread);
+#endif
 
   remove_process (proc);
 }
@@ -453,7 +454,7 @@ mint_process_target::fetch_registers (struct regcache *regcache, int regno)
   if (current_thread == nullptr)
     return;
   const mint_regset_info *regset = get_regs_info ();
-  ptid_t inferior_ptid = ptid_of (current_thread);
+  ptid_t inferior_ptid = current_thread->id;
 
   while (regset->size >= 0)
     {
@@ -477,7 +478,7 @@ mint_process_target::store_registers (struct regcache *regcache, int regno)
   if (current_thread == nullptr)
     return;
   const mint_regset_info *regset = get_regs_info ();
-  ptid_t inferior_ptid = ptid_of (current_thread);
+  ptid_t inferior_ptid = current_thread->id;
 
   while (regset->size >= 0)
     {
@@ -506,7 +507,7 @@ mint_process_target::read_memory (CORE_ADDR memaddr, unsigned char *myaddr,
 				    int size)
 {
   DTRACE("%s\n", __func__);
-  pid_t pid = pid_of(current_process());
+  pid_t pid = current_process()->pid;
   return mint_nat::read_memory (pid, myaddr, memaddr, size, nullptr);
 }
 
@@ -517,7 +518,7 @@ mint_process_target::write_memory (CORE_ADDR memaddr,
 				     const unsigned char *myaddr, int size)
 {
   DTRACE("%s\n", __func__);
-  pid_t pid = pid_of(current_process());
+  pid_t pid = current_process()->pid;
   return mint_nat::write_memory (pid, myaddr, memaddr, size, nullptr);
 }
 
@@ -527,7 +528,7 @@ void
 mint_process_target::request_interrupt (void)
 {
   DTRACE("%s\n", __func__);
-  ptid_t inferior_ptid = ptid_of (get_first_thread ());
+  ptid_t inferior_ptid = get_first_thread ()->id;
 
   ::kill (inferior_ptid.pid (), SIGINT);
 }
@@ -595,7 +596,7 @@ mint_process_target::stopped_by_sw_breakpoint (void)
 {
 #if USE_SIGTRAP_SIGINFO
   ptrace_siginfo_t psi;
-  pid_t pid = pid_of(current_process());
+  pid_t pid = current_process()->pid;
 
   if (ptrace (PT_GET_SIGINFO, pid, &psi, sizeof (psi)) == -1)
     perror_with_name (("ptrace"));
@@ -631,7 +632,7 @@ int
 mint_process_target::read_offsets (CORE_ADDR *text_p, CORE_ADDR *data_p)
 {
   long offset;
-  int pid = pid_of(current_process());
+  int pid = current_process()->pid;
 
   if (ptrace (PT_BASEPAGE, pid, 0, (long) &offset))
     return 0;
@@ -660,7 +661,7 @@ mint_process_target::qxfer_siginfo (const char *annex, unsigned char *readbuf,
   if (current_thread == nullptr)
     return -1;
 
-  pid_t pid = pid_of(current_process());
+  pid_t pid = current_process()->pid;
 
   return mint_nat::qxfer_siginfo(pid, annex, readbuf, writebuf, offset, len);
 }
