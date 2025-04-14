@@ -539,6 +539,8 @@ run_dump_test "pr31868c-x32"
 run_dump_test "tlsie5"
 run_dump_test "tlsdesc3"
 run_dump_test "tlsdesc4"
+run_dump_test "pr32191"
+run_dump_test "pr32191-x32"
 
 if { ![skip_sframe_tests] } {
     run_dump_test "sframe-simple-1"
@@ -1366,6 +1368,14 @@ if { [isnative] && [check_compiler_available] } {
 	    {{readelf -n indirect-extern-access.rd}}  \
 	    "libprotected-data-2b.so" \
 	] \
+	[list \
+	    "Build pr32067" \
+	    "-Wl,--oformat,binary -nostdlib -nostartfiles" \
+	    "" \
+	    { start.s pr32067.s } \
+	    {} \
+	    "pr32067" \
+	] \
     ]
 
     if  {[istarget "x86_64-*-linux*-gnux32"]} {
@@ -1863,6 +1873,22 @@ if { [isnative] && [check_compiler_available] } {
 	    "protected-data-2d" \
 	    "pass.out" \
 	    "-fPIE" \
+	] \
+	[list \
+	    "Run pr32189" \
+	    "$NOPIE_LDFLAGS -nostdlib -nostartfiles" \
+	    "" \
+	    { pr32189.s } \
+	    "pr32189" \
+	    "pass.out" \
+	] \
+	[list \
+	    "Run plt3" \
+	    "$NOPIE_LDFLAGS -nostdlib -nostartfiles" \
+	    "" \
+	    { plt3.s } \
+	    "plt3" \
+	    "pass.out" \
 	] \
     ]
 

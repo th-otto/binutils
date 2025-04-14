@@ -5935,7 +5935,13 @@ parentheses.  The following types are defined:
 
 @item NOLOAD
 The section should be marked as not loadable, so that it will not be
-loaded into memory when the program is run.
+loaded into memory when the program is run.  When generating an ELF
+output file, the memory space is allocated for the section at run-time,
+except for SHT_NOTE sections.  For other output files, no memory space
+is allocated at run-time.
+
+Note - the ELF behaviour is a bug that may change to be consistent
+with non-ELF targets.
 
 @item READONLY
 The section should be marked as read-only.
@@ -7614,7 +7620,6 @@ command line option. @xref{Options}.
 
 @menu
 * libdep Plugin::	Static Library Dependencies Plugin
-* lto Plugin::          LTO Plugin
 @end menu
 
 @node libdep Plugin
@@ -7652,24 +7657,6 @@ the @samp{__.LIBDEP} member of @file{libssl.a} would contain
 @smallexample
 -L/usr/local/lib -lcrypto
 @end smallexample
-
-Note any library search directories added in this way are only used to
-search for libraries which are also added the same plugin.  They are
-not used for searching for libraries specified on the linker command
-line, linker scripts or other plugins.  This does however present a
-problem if multiple archives with @samp{__.LIBDEP} entries are present
-as they will all be handled by the libdep plugin and thus they will
-share library search paths.  This could result in a library being
-loaded from an unexpected location.
-
-@node lto Plugin
-@section LTO Plugin
-Although not shipped with the binutils the LTO Plugin from the GCC
-project is nevertheless a plugin that is designed to work with the
-linker.  The plugin intercepts object files as they are loaded by the
-linker and instead sends them to the LTO compiler.  When that compiler
-finishes the resulting object file(s) are passed back to the linker
-for normal processing.
 
 @node Special Sections
 @chapter Special Sections

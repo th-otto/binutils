@@ -64,7 +64,7 @@ _bfd_elf_link_keep_memory (struct bfd_link_info *info)
      this is opt-in by each backend.  */
   const struct elf_backend_data *bed
     = get_elf_backend_data (info->output_bfd);
-  if (bed->use_mmap)
+  if (bed != NULL && bed->use_mmap)
     return false;
 #endif
   bfd *abfd;
@@ -2877,7 +2877,7 @@ _bfd_elf_link_info_read_relocs (bfd *abfd,
   if (keep_memory)
     esdo->relocs = internal_relocs;
 
-  _bfd_munmap_readonly_temporary (alloc1, alloc1_size);
+  _bfd_munmap_temporary (alloc1, alloc1_size);
 
   /* Don't free alloc2, since if it was allocated we are passing it
      back (under the name of internal_relocs).  */
@@ -2885,7 +2885,7 @@ _bfd_elf_link_info_read_relocs (bfd *abfd,
   return internal_relocs;
 
  error_return:
-  _bfd_munmap_readonly_temporary (alloc1, alloc1_size);
+  _bfd_munmap_temporary (alloc1, alloc1_size);
   if (alloc2 != NULL)
     {
       if (keep_memory)
@@ -3653,6 +3653,7 @@ elf_link_is_defined_archive_symbol (bfd * abfd, carsym * symdef)
      object file is an IR object, give linker LTO plugin a chance to
      get the correct symbol table.  */
   if (abfd->plugin_format == bfd_plugin_yes
+      || abfd->plugin_format == bfd_plugin_yes_unused
 #if BFD_SUPPORTS_PLUGINS
       || (abfd->plugin_format == bfd_plugin_unknown
 	  && bfd_link_plugin_object_p (abfd))
@@ -5694,7 +5695,8 @@ elf_link_add_object_symbols (bfd *abfd, struct bfd_link_info *info)
       && !bfd_link_relocatable (info)
       && (abfd->flags & BFD_PLUGIN) == 0
       && !just_syms
-      && extsymcount)
+      && extsymcount != 0
+      && is_elf_hash_table (&htab->root))
     {
       int r_sym_shift;
 

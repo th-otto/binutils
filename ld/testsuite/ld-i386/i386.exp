@@ -513,6 +513,7 @@ run_dump_test "pr28870"
 run_dump_test "pr28894"
 run_dump_test "pr30787"
 run_dump_test "pr31047"
+run_dump_test "pr32191"
 
 if { !([istarget "i?86-*-linux*"]
        || [istarget "i?86-*-gnu*"]
@@ -1322,6 +1323,14 @@ if { [isnative]
 	    { pr21997-1b.c } \
 	    {{error_output "pr21997-1.err"}} \
 	    "pr21997-1" \
+	] \
+	[list \
+	    "Build pr32067" \
+	    "-Wl,--oformat,binary -nostdlib -nostartfiles" \
+	    "" \
+	    { start.s ../ld-x86-64/pr32067.s } \
+	    {} \
+	    "pr32067" \
 	] \
     ]
 

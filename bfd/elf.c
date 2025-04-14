@@ -286,26 +286,22 @@ bfd_elf_get_str_section (bfd *abfd, unsigned int shindex)
       offset = i_shdrp[shindex]->sh_offset;
       shstrtabsize = i_shdrp[shindex]->sh_size;
 
-      /* Allocate and clear an extra byte at the end, to prevent crashes
-	 in case the string table is not terminated.  */
-      if (shstrtabsize + 1 <= 1
+      if (shstrtabsize == 0
 	  || bfd_seek (abfd, offset, SEEK_SET) != 0
-	  || (shstrtab
-	      = _bfd_mmap_readonly_persistent (abfd, shstrtabsize)) == NULL)
+	  || (shstrtab = _bfd_mmap_persistent (abfd, shstrtabsize)) == NULL)
 	{
 	  /* Once we've failed to read it, make sure we don't keep
 	     trying.  Otherwise, we'll keep allocating space for
 	     the string table over and over.  */
 	  i_shdrp[shindex]->sh_size = 0;
 	}
-      else if (shstrtab[shstrtabsize - 1] != '\0')
+      else if (shstrtab[shstrtabsize - 1] != 0)
 	{
 	  /* It is an error if a string table isn't terminated.  */
 	  _bfd_error_handler
 	    /* xgettext:c-format */
-	    (_("%pB(%pA): string table is corrupt"),
-	     abfd, i_shdrp[shindex]->bfd_section);
-	  return NULL;
+	    (_("%pB: string table [%u] is corrupt"), abfd, shindex);
+	  shstrtab[shstrtabsize - 1] = 0;
 	}
       i_shdrp[shindex]->contents = shstrtab;
     }
@@ -525,9 +521,9 @@ bfd_elf_get_elf_syms (bfd *ibfd,
       }
 
  out1:
-  _bfd_munmap_readonly_temporary (alloc_extshndx, alloc_extshndx_size);
+  _bfd_munmap_temporary (alloc_extshndx, alloc_extshndx_size);
  out2:
-  _bfd_munmap_readonly_temporary (alloc_ext, alloc_ext_size);
+  _bfd_munmap_temporary (alloc_ext, alloc_ext_size);
 
   return intsym_buf;
 }
@@ -1737,8 +1733,7 @@ get_hash_table_data (bfd *abfd, bfd_size_type number,
       return NULL;
     }
 
-  e_data = _bfd_mmap_readonly_temporary (abfd, size, &e_data_addr,
-					 &e_data_size);
+  e_data = _bfd_mmap_temporary (abfd, size, &e_data_addr, &e_data_size);
   if (e_data == NULL)
     return NULL;
 
@@ -1756,7 +1751,7 @@ get_hash_table_data (bfd *abfd, bfd_size_type number,
     while (number--)
       i_data[number] = bfd_get_64 (abfd, e_data + number * ent_size);
 
-  _bfd_munmap_readonly_temporary (e_data_addr, e_data_size);
+  _bfd_munmap_temporary (e_data_addr, e_data_size);
   return i_data;
 }
 
@@ -1827,8 +1822,7 @@ _bfd_elf_get_dynamic_symbols (bfd *abfd, Elf_Internal_Phdr *phdr,
     goto error_return;
 
   dynbuf_size = phdr->p_filesz;
-  dynbuf = _bfd_mmap_readonly_temporary (abfd, dynbuf_size,
-					 &dynbuf_addr, &dynbuf_size);
+  dynbuf = _bfd_mmap_temporary (abfd, dynbuf_size, &dynbuf_addr, &dynbuf_size);
   if (dynbuf == NULL)
     goto error_return;
 
@@ -1906,7 +1900,7 @@ _bfd_elf_get_dynamic_symbols (bfd *abfd, Elf_Internal_Phdr *phdr,
     goto error_return;
 
   /* Dynamic string table must be valid until ABFD is closed.  */
-  strbuf = (char *) _bfd_mmap_readonly_persistent (abfd, dt_strsz);
+  strbuf = (char *) _bfd_mmap_persistent (abfd, dt_strsz);
   if (strbuf == NULL)
     goto error_return;
   if (strbuf[dt_strsz - 1] != 0)
@@ -1915,7 +1909,7 @@ _bfd_elf_get_dynamic_symbols (bfd *abfd, Elf_Internal_Phdr *phdr,
       _bfd_error_handler
 	/* xgettext:c-format */
 	(_("%pB: DT_STRTAB table is corrupt"), abfd);
-      goto error_return;
+      strbuf[dt_strsz - 1] = 0;
     }
 
   /* Get the real symbol count from DT_HASH or DT_GNU_HASH.  Prefer
@@ -2092,9 +2086,8 @@ _bfd_elf_get_dynamic_symbols (bfd *abfd, Elf_Internal_Phdr *phdr,
       || bfd_seek (abfd, filepos, SEEK_SET) != 0)
     goto error_return;
   esymbuf_size = amt;
-  esymbuf = _bfd_mmap_readonly_temporary (abfd, esymbuf_size,
-					  &esymbuf_addr,
-					  &esymbuf_size);
+  esymbuf = _bfd_mmap_temporary (abfd, esymbuf_size,
+				 &esymbuf_addr, &esymbuf_size);
   if (esymbuf == NULL)
     goto error_return;
 
@@ -2138,7 +2131,7 @@ _bfd_elf_get_dynamic_symbols (bfd *abfd, Elf_Internal_Phdr *phdr,
 	goto error_return;
 
       /* DT_VERSYM info must be valid until ABFD is closed.  */
-      versym = _bfd_mmap_readonly_persistent (abfd, amt);
+      versym = _bfd_mmap_persistent (abfd, amt);
 
       if (dt_verdef)
 	{
@@ -2150,7 +2143,7 @@ _bfd_elf_get_dynamic_symbols (bfd *abfd, Elf_Internal_Phdr *phdr,
 	    goto error_return;
 
 	  /* DT_VERDEF info must be valid until ABFD is closed.  */
-	  verdef = _bfd_mmap_readonly_persistent (abfd, verdef_size);
+	  verdef = _bfd_mmap_persistent (abfd, verdef_size);
 	}
 
       if (dt_verneed)
@@ -2163,7 +2156,7 @@ _bfd_elf_get_dynamic_symbols (bfd *abfd, Elf_Internal_Phdr *phdr,
 	    goto error_return;
 
 	  /* DT_VERNEED info must be valid until ABFD is closed.  */
-	  verneed = _bfd_mmap_readonly_persistent (abfd, verneed_size);
+	  verneed = _bfd_mmap_persistent (abfd, verneed_size);
 	}
     }
 
@@ -2186,8 +2179,8 @@ _bfd_elf_get_dynamic_symbols (bfd *abfd, Elf_Internal_Phdr *phdr,
   /* Restore file position for elf_object_p.  */
   if (bfd_seek (abfd, saved_filepos, SEEK_SET) != 0)
     res = false;
-  _bfd_munmap_readonly_temporary (dynbuf_addr, dynbuf_size);
-  _bfd_munmap_readonly_temporary (esymbuf_addr, esymbuf_size);
+  _bfd_munmap_temporary (dynbuf_addr, dynbuf_size);
+  _bfd_munmap_temporary (esymbuf_addr, esymbuf_size);
   free (gnubuckets);
   free (gnuchains);
   free (mipsxlat);
@@ -9336,9 +9329,8 @@ _bfd_elf_slurp_version_tables (bfd *abfd, bool default_imported_symver)
 	  if (bfd_seek (abfd, hdr->sh_offset, SEEK_SET) != 0)
 	    goto error_return_verref;
 	  contents_size = hdr->sh_size;
-	  contents = _bfd_mmap_readonly_temporary (abfd, contents_size,
-						   &contents_addr,
-						   &contents_size);
+	  contents = _bfd_mmap_temporary (abfd, contents_size,
+					  &contents_addr, &contents_size);
 	  if (contents == NULL)
 	    goto error_return_verref;
 
@@ -9471,7 +9463,7 @@ _bfd_elf_slurp_version_tables (bfd *abfd, bool default_imported_symver)
       elf_tdata (abfd)->cverrefs = i;
 
       if (contents != elf_tdata (abfd)->dt_verneed)
-	_bfd_munmap_readonly_temporary (contents_addr, contents_size);
+	_bfd_munmap_temporary (contents_addr, contents_size);
       contents = NULL;
       contents_addr = NULL;
     }
@@ -9515,9 +9507,8 @@ _bfd_elf_slurp_version_tables (bfd *abfd, bool default_imported_symver)
 	  if (bfd_seek (abfd, hdr->sh_offset, SEEK_SET) != 0)
 	    goto error_return_verdef;
 	  contents_size = hdr->sh_size;
-	  contents = _bfd_mmap_readonly_temporary (abfd, contents_size,
-						   &contents_addr,
-						   &contents_size);
+	  contents = _bfd_mmap_temporary (abfd, contents_size,
+					  &contents_addr, &contents_size);
 	  if (contents == NULL)
 	    goto error_return_verdef;
 
@@ -9671,7 +9662,7 @@ _bfd_elf_slurp_version_tables (bfd *abfd, bool default_imported_symver)
 	}
 
       if (contents != elf_tdata (abfd)->dt_verdef)
-	_bfd_munmap_readonly_temporary (contents_addr, contents_size);
+	_bfd_munmap_temporary (contents_addr, contents_size);
       contents = NULL;
       contents_addr = NULL;
     }
@@ -9729,7 +9720,7 @@ _bfd_elf_slurp_version_tables (bfd *abfd, bool default_imported_symver)
  error_return:
   if (contents != elf_tdata (abfd)->dt_verneed
       && contents != elf_tdata (abfd)->dt_verdef)
-    _bfd_munmap_readonly_temporary (contents_addr, contents_size);
+    _bfd_munmap_temporary (contents_addr, contents_size);
   return false;
 }
 

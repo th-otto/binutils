@@ -1263,6 +1263,7 @@ struct out_section_hash_entry
 {
   struct bfd_hash_entry root;
   lang_statement_union_type s;
+  struct out_section_hash_entry *tail;
 };
 
 /* The hash table.  */
@@ -1272,10 +1273,10 @@ static struct bfd_hash_table output_section_statement_table;
 /* Support routines for the hash table used by lang_output_section_find,
    initialize the table, fill in an entry and remove the table.  */
 
-static struct bfd_hash_entry *
-output_section_statement_newfunc (struct bfd_hash_entry *entry,
-				  struct bfd_hash_table *table,
-				  const char *string)
+static struct out_section_hash_entry *
+output_section_statement_newfunc_1 (struct bfd_hash_entry *entry,
+				    struct bfd_hash_table *table,
+				    const char *string)
 {
   lang_output_section_statement_type **nextp;
   struct out_section_hash_entry *ret;
@@ -1285,12 +1286,12 @@ output_section_statement_newfunc (struct bfd_hash_entry *entry,
       entry = (struct bfd_hash_entry *) bfd_hash_allocate (table,
 							   sizeof (*ret));
       if (entry == NULL)
-	return entry;
+	return NULL;
     }
 
   entry = bfd_hash_newfunc (entry, table, string);
   if (entry == NULL)
-    return entry;
+    return NULL;
 
   ret = (struct out_section_hash_entry *) entry;
   memset (&ret->s, 0, sizeof (ret->s));
@@ -1316,6 +1317,20 @@ output_section_statement_newfunc (struct bfd_hash_entry *entry,
      instead.  */
   nextp = &ret->s.output_section_statement.next;
   lang_statement_append (&lang_os_list, &ret->s, nextp);
+  return ret;
+}
+
+static struct bfd_hash_entry *
+output_section_statement_newfunc (struct bfd_hash_entry *entry,
+				  struct bfd_hash_table *table,
+				  const char *string)
+{
+  struct out_section_hash_entry *ret;
+
+  ret = output_section_statement_newfunc_1 (entry, table, string);
+  if (ret == NULL)
+    return NULL;
+  ret->tail = ret;
   return &ret->root;
 }
 
@@ -1541,31 +1556,39 @@ lang_output_section_statement_lookup (const char *name,
     {
       /* We have a section of this name, but it might not have the correct
 	 constraint.  */
+      struct out_section_hash_entry *first_ent = entry;
       struct out_section_hash_entry *last_ent;
 
       name = entry->s.output_section_statement.name;
-      do
+      if (create != 2
+	  && !(create && constraint == SPECIAL))
 	{
-	  if (create != 2
-	      && !(create && constraint == SPECIAL)
-	      && (constraint == entry->s.output_section_statement.constraint
+	  do
+	    {
+	      if (constraint == entry->s.output_section_statement.constraint
 		  || (constraint == 0
-		      && entry->s.output_section_statement.constraint >= 0)))
-	    return &entry->s.output_section_statement;
-	  last_ent = entry;
-	  entry = (struct out_section_hash_entry *) entry->root.next;
+		      && entry->s.output_section_statement.constraint >= 0))
+		return &entry->s.output_section_statement;
+	      last_ent = entry;
+	      entry = (struct out_section_hash_entry *) entry->root.next;
+	    }
+	  while (entry != NULL
+		 && name == entry->s.output_section_statement.name);
 	}
-      while (entry != NULL
-	     && name == entry->s.output_section_statement.name);
+      else
+	last_ent = first_ent->tail;
 
       if (!create)
 	return NULL;
 
-      entry
-	= ((struct out_section_hash_entry *)
-	   output_section_statement_newfunc (NULL,
-					     &output_section_statement_table,
-					     name));
+      /* Only the first entry needs the tail pointer.  */
+      entry = bfd_hash_allocate (&output_section_statement_table,
+				 offsetof (struct out_section_hash_entry, tail));
+      if (entry != NULL)
+	entry
+	  = output_section_statement_newfunc_1 (&entry->root,
+						&output_section_statement_table,
+						name);
       if (entry == NULL)
 	{
 	  einfo (_("%F%P: failed creating section `%s': %E\n"), name);
@@ -1573,6 +1596,7 @@ lang_output_section_statement_lookup (const char *name,
 	}
       entry->root = last_ent->root;
       last_ent->root.next = &entry->root;
+      first_ent->tail = entry;
     }
 
   entry->s.output_section_statement.name = name;
@@ -2731,8 +2755,10 @@ lang_add_section (lang_statement_list_type *ptr,
       /* Unfortunately GNU ld has managed to evolve two different
 	 meanings to NOLOAD in scripts.  ELF gets a .bss style noload,
 	 alloc, no contents section.  All others get a noload, noalloc
-	 section.  */
-      if (bfd_get_flavour (link_info.output_bfd) == bfd_target_elf_flavour)
+	 section.  Unlike a .bss style section, if a note section is
+	 marked as NOLOAD, also clear SEC_ALLOC.  */
+      if (bfd_get_flavour (link_info.output_bfd) == bfd_target_elf_flavour
+	  && elf_section_type (section) != SHT_NOTE)
 	flags &= ~SEC_HAS_CONTENTS;
       else
 	flags &= ~SEC_ALLOC;
@@ -8556,6 +8582,7 @@ lang_add_wild (struct wildcard_spec *filespec,
   new_stmt = new_stat (lang_wild_statement, stat_ptr);
   new_stmt->filename = NULL;
   new_stmt->filenames_sorted = false;
+  new_stmt->filenames_reversed = false;
   new_stmt->any_specs_sorted = any_specs_sorted;
   new_stmt->section_flag_list = NULL;
   new_stmt->exclude_name_list = NULL;
@@ -8563,9 +8590,9 @@ lang_add_wild (struct wildcard_spec *filespec,
     {
       new_stmt->filename = filespec->name;
       new_stmt->filenames_sorted = (filespec->sorted == by_name || filespec->reversed);
+      new_stmt->filenames_reversed = filespec->reversed;
       new_stmt->section_flag_list = filespec->section_flag_list;
       new_stmt->exclude_name_list = filespec->exclude_name_list;
-      new_stmt->filenames_reversed = filespec->reversed;
     }
   new_stmt->section_list = section_list;
   new_stmt->keep_sections = keep_sections;

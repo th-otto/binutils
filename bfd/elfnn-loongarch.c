@@ -84,6 +84,14 @@ struct _bfd_loongarch_elf_obj_tdata
    && elf_tdata (bfd) != NULL						\
    && elf_object_id (bfd) == LARCH_ELF_DATA)
 
+static bool
+elfNN_loongarch_object (bfd *abfd)
+{
+  return bfd_elf_allocate_object (abfd,
+				  sizeof (struct _bfd_loongarch_elf_obj_tdata),
+				  LARCH_ELF_DATA);
+}
+
 struct relr_entry
 {
   asection *sec;
@@ -5317,8 +5325,8 @@ loongarch_elf_relax_section (bfd *abfd, asection *sec,
   for (unsigned int i = 0; i < sec->reloc_count; i++)
     {
       char symtype;
-      bfd_vma symval;
-      asection *sym_sec;
+      bfd_vma symval = 0; /* "= 0" for https://gcc.gnu.org/PR118216 */
+      asection *sym_sec = NULL;
       bool local_got = false;
       Elf_Internal_Rela *rel = relocs + i;
       struct elf_link_hash_entry *h = NULL;
@@ -5402,6 +5410,11 @@ loongarch_elf_relax_section (bfd *abfd, asection *sec,
 		    && GOT_TLS_GD_BOTH_P (tls_type))
 		symval += 2 * GOT_ENTRY_SIZE;
 	    }
+	  else if (h->plt.offset != MINUS_ONE)
+	    {
+	      sym_sec = htab->elf.splt ? htab->elf.splt : htab->elf.iplt;
+	      symval = h->plt.offset;
+	    }
 	  else if ((h->root.type == bfd_link_hash_defined
 		  || h->root.type == bfd_link_hash_defweak)
 		&& h->root.u.def.section != NULL
@@ -5410,13 +5423,32 @@ loongarch_elf_relax_section (bfd *abfd, asection *sec,
 	      symval = h->root.u.def.value;
 	      sym_sec = h->root.u.def.section;
 	    }
-	  else
-	    continue;
 
 	  if (h && LARCH_REF_LOCAL (info, h))
 	    local_got = true;
 	  symtype = h->type;
 	}
+
+      /* If the conditions for tls type transition are met, type
+	 transition is performed instead of relax.
+	 During the transition from DESC->IE/LE, there are 2 situations
+	 depending on the different configurations of the relax/norelax
+	 option.
+	 If the -relax option is used, the extra nops will be removed,
+	 and this transition is performed in pass 0.
+	 If the --no-relax option is used, nop will be retained, and
+	 this transition is performed in pass 1.  */
+      if (IS_LOONGARCH_TLS_TRANS_RELOC (r_type)
+	  && (i + 1 != sec->reloc_count)
+	  && ELFNN_R_TYPE (rel[1].r_info) == R_LARCH_RELAX
+	  && loongarch_can_trans_tls (abfd, info, h, r_symndx, r_type))
+	{
+	  loongarch_tls_perform_trans (abfd, sec, rel, h, info);
+	  r_type = ELFNN_R_TYPE (rel->r_info);
+	}
+
+      if (!sym_sec)
+	continue;
 
       if (sym_sec->sec_info_type == SEC_INFO_TYPE_MERGE
 	   && (sym_sec->flags & SEC_MERGE))
@@ -5444,24 +5476,6 @@ loongarch_elf_relax_section (bfd *abfd, asection *sec,
 	symval += rel->r_addend;
 
       symval += sec_addr (sym_sec);
-
-      /* If the conditions for tls type transition are met, type
-	 transition is performed instead of relax.
-	 During the transition from DESC->IE/LE, there are 2 situations
-	 depending on the different configurations of the relax/norelax
-	 option.
-	 If the -relax option is used, the extra nops will be removed,
-	 and this transition is performed in pass 0.
-	 If the --no-relax option is used, nop will be retained, and
-	 this transition is performed in pass 1.  */
-      if (IS_LOONGARCH_TLS_TRANS_RELOC (r_type)
-	  && (i + 1 != sec->reloc_count)
-	  && ELFNN_R_TYPE (rel[1].r_info) == R_LARCH_RELAX
-	  && loongarch_can_trans_tls (abfd, info, h, r_symndx, r_type))
-	{
-	  loongarch_tls_perform_trans (abfd, sec, rel, h, info);
-	  r_type = ELFNN_R_TYPE (rel->r_info);
-	}
 
       switch (r_type)
 	{
@@ -6147,6 +6161,8 @@ elf_loongarch64_hash_symbol (struct elf_link_hash_entry *h)
 #define bfd_elfNN_bfd_reloc_name_lookup loongarch_reloc_name_lookup
 #define elf_info_to_howto_rel NULL /* Fall through to elf_info_to_howto.  */
 #define elf_info_to_howto loongarch_info_to_howto_rela
+#define bfd_elfNN_mkobject						  \
+  elfNN_loongarch_object
 #define bfd_elfNN_bfd_merge_private_bfd_data				  \
   elfNN_loongarch_merge_private_bfd_data
 
