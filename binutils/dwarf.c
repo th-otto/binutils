@@ -2408,12 +2408,15 @@ display_lang (uint64_t uvalue)
     case DW_LANG_C_plus_plus_23:	printf ("C++23"); break;
     case DW_LANG_Odin:                  printf ("Odin"); break;
     case DW_LANG_P4:                    printf ("P4"); break;
-    case DW_LANG_Metal:                 printf ("C23"); break;
+    case DW_LANG_Metal:                 printf ("Metal"); break;
     case DW_LANG_C23:                   printf ("C23"); break;
     case DW_LANG_Fortran23:             printf ("Fortran 23"); break;
     case DW_LANG_Ruby:                  printf ("Ruby"); break;
     case DW_LANG_Move:                  printf ("Move"); break;
     case DW_LANG_Hylo:                  printf ("Hylo"); break;
+    case DW_LANG_V:                     printf ("V"); break;
+    case DW_LANG_Algol68:               printf ("Algol 68"); break;
+    case DW_LANG_Nim:                   printf ("Nim"); break;
 
       /* MIPS extension.  */
     case DW_LANG_Mips_Assembler:	printf ("MIPS assembler"); break;
@@ -2423,6 +2426,69 @@ display_lang (uint64_t uvalue)
 
     default:
       if (uvalue >= DW_LANG_lo_user && uvalue <= DW_LANG_hi_user)
+	printf (_("implementation defined: %#" PRIx64 ""), uvalue);
+      else
+	printf (_("unknown: %#" PRIx64 ""), uvalue);
+      break;
+    }
+}
+
+static void
+display_lang_name (uint64_t uvalue)
+{
+  switch (uvalue)
+    {
+      /* Ordered by the numeric value of these constants.  */
+    case DW_LNAME_Ada:			printf ("ISO Ada"); break;
+    case DW_LNAME_BLISS:		printf ("BLISS"); break;
+    case DW_LNAME_C:			printf ("ISO C"); break;
+    case DW_LNAME_C_plus_plus:	printf ("ISO C++"); break;
+    case DW_LNAME_Cobol:		printf ("Cobol"); break;
+    case DW_LNAME_Crystal:		printf ("Crystal"); break;
+    case DW_LNAME_D:			printf ("D"); break;
+    case DW_LNAME_Dylan:		printf ("Dylan"); break;
+    case DW_LNAME_Fortran:		printf ("Fortran"); break;
+    case DW_LNAME_Go:			printf ("Go"); break;
+    case DW_LNAME_Haskell:		printf ("Haskell"); break;
+    case DW_LNAME_Java:			printf ("Java"); break;
+    case DW_LNAME_Julia:		printf ("Julia"); break;
+    case DW_LNAME_Kotlin:		printf ("kotlin"); break;
+    case DW_LNAME_Modula2:		printf ("Modula 2"); break;
+    case DW_LNAME_Modula3:		printf ("Modula 3"); break;
+    case DW_LNAME_ObjC:			printf ("Objective C"); break;
+    case DW_LNAME_ObjC_plus_plus:	printf ("Objective C++"); break;
+    case DW_LNAME_OCaml:		printf ("OCaml"); break;
+    case DW_LNAME_OpenCL_C:		printf ("OpenCL C"); break;
+    case DW_LNAME_Pascal:		printf ("ISO Pascal"); break;
+    case DW_LNAME_PLI:			printf ("ANSI PL/I"); break;
+    case DW_LNAME_Python:		printf ("Python"); break;
+    case DW_LNAME_RenderScript:		printf ("RenderScript"); break;
+    case DW_LNAME_Rust:			printf ("Rust"); break;
+    case DW_LNAME_Swift:		printf ("Swift"); break;
+    case DW_LNAME_UPC:			printf ("Unified Parallel C"); break;
+    case DW_LNAME_Zig:			printf ("Zig"); break;
+    case DW_LNAME_Assembly:     printf ("Assembler"); break;
+    case DW_LNAME_C_sharp:      printf ("C#"); break;
+    case DW_LNAME_Mojo:         printf ("Mojo"); break;
+    case DW_LNAME_GLSL:         printf ("OpenGL Shading Language"); break;
+    case DW_LNAME_GLSL_ES:      printf ("OpenGL ES Shading Language"); break;
+    case DW_LNAME_HLSL:         printf ("High Level Shading Language"); break;
+    case DW_LNAME_OpenCL_CPP:   printf ("OpenCL C++"); break;
+    case DW_LNAME_CPP_for_OpenCL: printf ("C++ for OpenCL"); break;
+    case DW_LNAME_SYCL:         printf ("SYCL"); break;
+    case DW_LNAME_Ruby:         printf ("Ruby"); break;
+    case DW_LNAME_Move:         printf ("Move"); break;
+    case DW_LNAME_Hylo:         printf ("Hylo"); break;
+    case DW_LNAME_HIP:          printf ("Hip"); break;
+    case DW_LNAME_Odin:         printf ("Odin"); break;
+    case DW_LNAME_P4:           printf ("P4"); break;
+    case DW_LNAME_Metal:        printf ("Metal"); break;
+    case DW_LNAME_V:            printf ("V"); break;
+    case DW_LNAME_Algol68:      printf ("Algol 68"); break;
+    case DW_LNAME_Nim:          printf ("Nim"); break;
+
+    default:
+      if (uvalue >= DW_LNAME_lo_user && uvalue <= DW_LNAME_hi_user)
 	printf (_("implementation defined: %#" PRIx64 ""), uvalue);
       else
 	printf (_("unknown: %#" PRIx64 ""), uvalue);
@@ -3196,6 +3262,16 @@ read_and_display_attr_value (unsigned long attribute,
       printf ("\t(");
       display_lang (uvalue);
       printf (")");
+      break;
+
+    case DW_AT_language_name:
+      printf ("\t(");
+      display_lang_name (uvalue);
+      printf (")");
+      break;
+
+    case DW_AT_language_version:
+      printf ("\t(%" PRIu64 ")", uvalue);
       break;
 
     case DW_AT_encoding:
